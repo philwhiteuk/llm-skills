@@ -4,20 +4,47 @@
     {
       "id": 1,
       "prompt": "Just got out of a meeting with the ops team. They're frustrated because every time a deployment fails they have to SSH into the server, tail the logs, and figure out what went wrong. Sometimes it takes 30 mins just to find the relevant error. They want us to build an ELK stack so they can search logs from a dashboard. Also mentioned wanting Slack alerts when something goes wrong. Can you turn this into a spec?",
-      "expected_output": "A solution-agnostic spec that reframes 'ELK stack' and 'Slack alerts' into outcome-based acceptance criteria about log searchability and failure notifications, with a clear Why, Who (user story), and What (acceptance criteria).",
-      "files": []
+      "expected_output": "A concise, solution-agnostic spec (~30 lines) that reframes 'ELK stack' and 'Slack alerts' into outcome-based acceptance criteria about log searchability and failure notifications, with a clear Why, Who (user story), and max 5 acceptance criteria.",
+      "files": [],
+      "expectations": [
+        "Spec contains a Why section explaining the business need",
+        "Spec contains a user story in As.../I want.../so that... format",
+        "Spec contains no more than 5 acceptance criteria",
+        "Spec does not prescribe ELK/Elasticsearch/Logstash/Kibana as the solution",
+        "Acceptance criteria do not prescribe Slack — alerting framed as an outcome",
+        "Acceptance criteria describe observable behaviours, not implementation details",
+        "Entire spec is under 60 lines of Markdown"
+      ]
     },
     {
       "id": 2,
       "prompt": "Our sales team keeps asking for better reporting. They want to see how deals are progressing and where things are getting stuck in the pipeline. Right now they export stuff to Excel and manually build charts. The VP of Sales wants this sorted by end of Q2.",
-      "expected_output": "A spec that extracts the core problem (lack of visibility into deal progression) without prescribing the solution, asks clarifying questions about what 'better reporting' means concretely, and captures measurable acceptance criteria.",
-      "files": []
+      "expected_output": "A concise, solution-agnostic spec (~30 lines) that extracts the core problem (lack of visibility into deal progression) without prescribing the solution, with max 5 outcome-based acceptance criteria.",
+      "files": [],
+      "expectations": [
+        "Spec contains a Why section explaining the business need",
+        "Spec contains a user story in As.../I want.../so that... format",
+        "Spec contains no more than 5 acceptance criteria",
+        "Spec does not prescribe specific technologies",
+        "Acceptance criteria address the core need: deal progression and bottleneck identification",
+        "Acceptance criteria describe observable behaviours, not implementation details",
+        "Entire spec is under 60 lines of Markdown"
+      ]
     },
     {
       "id": 3,
       "prompt": "title: 'show customer's full history' | epic: title: customer support web ui\n\nTo help improve the experience for customers when they contact customer support we want to build a web portal to help customer support agents quickly find the right information about their users across our large user base. We have a number of internal and third party systems that hold customer data and it would be ideal if we could consolidate the useful information into a single view. The customer support team currently has to switch between 4-5 different tools to find what they need, which slows down call handling times and frustrates both agents and customers.",
-      "expected_output": "A spec that preserves the existing structure (title, epic context), writes a clear user story for the support agent, and defines acceptance criteria around consolidated view, response time, and information completeness — without naming specific systems or UI frameworks.",
-      "files": []
+      "expected_output": "A concise, solution-agnostic spec (~30 lines) that preserves the title/epic context, writes a clear user story for the support agent, and defines max 5 acceptance criteria around consolidated view, response time, and information completeness — without naming specific systems or UI frameworks.",
+      "files": [],
+      "expectations": [
+        "Spec contains a Why section explaining the business need",
+        "Spec contains a user story in As.../I want.../so that... format",
+        "Spec contains no more than 5 acceptance criteria",
+        "Spec does not prescribe specific technologies",
+        "Spec preserves or references the title/epic context from the input",
+        "Acceptance criteria describe observable behaviours, not implementation details",
+        "Entire spec is under 60 lines of Markdown"
+      ]
     }
   ]
 }
