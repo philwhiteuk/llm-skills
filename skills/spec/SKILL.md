@@ -1,5 +1,5 @@
 ---
-name: spec-writing
+name: spec
 description: >
   Write solution-agnostic specifications from meeting notes, requirements, or problem descriptions.
   Use this skill whenever a user wants to create a spec, write acceptance criteria, draft requirements,
