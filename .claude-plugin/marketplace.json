@@ -1,0 +1,13 @@
+{
+  "name": "philwhiteuk",
+  "owner": {
+    "name": "Phil White"
+  },
+  "plugins": [
+    {
+      "name": "develop",
+      "source": "./",
+      "description": "a plugin to automate common development tasks"
+    }
+  ]
+}
