@@ -1,0 +1,64 @@
+{
+  "skill_name": "spec-template",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Turn this into a ticket:\n\n# Subscribe to newsletter\n\n## Why\n\nUsers have been asking for a way to stay informed about product updates without logging in. Marketing want to grow an email list to support upcoming feature announcements.\n\n## Who\n\n> As a visitor to the marketing site, I want to subscribe to the product newsletter, so that I receive updates without needing an account.\n\n## What (Acceptance Criteria)\n\n1. Users can enter their email address on the marketing site and submit it.\n2. A success message is shown immediately after submission.\n3. Duplicate submissions for the same email are handled gracefully — no error shown to the user.\n4. The submitted email is stored and available to the marketing team.\n5. The flow works on mobile and desktop.",
+      "expected_output": "Classified as a Story. Rendered story.md template with user story broken into persona/goal/benefit. All 5 ACs listed. No Discussion Points section (spec has no Open Questions).",
+      "assertions": [
+        { "id": "classifies-as-story", "text": "Output classifies the spec as a Story (not Task, Spike, or Bug)" },
+        { "id": "uses-story-template", "text": "Output contains the '## 📖 User Story' section from the story template" },
+        { "id": "user-story-broken-down", "text": "The user story persona ('visitor to the marketing site'), goal, and benefit are correctly extracted and used" },
+        { "id": "all-five-acs-present", "text": "All 5 acceptance criteria from the spec appear in the output" },
+        { "id": "no-discussion-points", "text": "Output does NOT contain a '## 💬 Discussion Points' section (the spec has no Open Questions)" }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Can you make this a ticket?\n\n# Subscriber data storage\n\n## Why\n\nThe newsletter subscription flow requires a place to persist email addresses. Without this, submitted emails are lost and cannot be used by marketing.\n\n## Who\n\n> As the marketing platform, I want subscriber emails to be durably stored, so that they can be retrieved and exported by the marketing team.\n\n## What (Acceptance Criteria)\n\n1. Submitted email addresses are persisted beyond the request lifecycle.\n2. The stored data is queryable by the marketing team or via an admin interface.\n3. Duplicate emails are deduplicated at the storage level.\n4. Data is retained according to the company's data retention policy.",
+      "expected_output": "Classified as a Task (the 'user' is the platform, not an end-user; this is infrastructure supporting the subscribe feature). Rendered task.md template. Context section is plain text from the Why section.",
+      "assertions": [
+        { "id": "classifies-as-task", "text": "Output classifies the spec as a Task (not Story — 'the marketing platform' as user is the signal)" },
+        { "id": "uses-task-template", "text": "Output contains the '## 🔧 Task' section from the task template" },
+        { "id": "context-from-why", "text": "The '## 📋 Context' section is populated with content from the spec's Why section" },
+        { "id": "all-four-acs-present", "text": "All 4 acceptance criteria from the spec appear in the output" },
+        { "id": "context-plain-text", "text": "The Context section contains plain text with no italic formatting and no 'Why this is needed:' label prefix" }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Please turn this spec into a ticket.\n\n# Email delivery approach for newsletter\n\n## Why\n\nBefore we build the subscriber notification system, we need to decide how transactional and marketing emails will be sent. There are several viable approaches with different cost, reliability, and compliance implications. Choosing the wrong one now could require a significant rework later.\n\n## Who\n\n> As an engineering team, we want to understand the best approach for sending emails at scale, so that we can build the notification system on the right foundation.\n\n## What (Acceptance Criteria)\n\n1. A comparison of at least two viable email delivery approaches is documented.\n2. A clear recommendation is made with justification.\n3. Any compliance or data-residency constraints are identified.\n4. The estimated cost at 10k, 100k, and 1M subscribers is included.\n\n## Open Questions\n\n- Do we need to self-host for data residency reasons, or can we use a third-party service?\n- What volume of emails do we anticipate in year one?\n- Are there existing vendor relationships we should factor in?",
+      "expected_output": "Classified as a Spike. Open questions are substantial; the team is investigating options, not building yet. Rendered spike.md template with 'Spike: ' prefix on summary. ACs contain concrete spike deliverables derived from open questions.",
+      "assertions": [
+        { "id": "classifies-as-spike", "text": "Output classifies the spec as a Spike" },
+        { "id": "uses-spike-template", "text": "Output contains the '## 🔬 Spike' section from the spike template" },
+        { "id": "summary-prefixed", "text": "The SUMMARY field is prefixed with 'Spike:' (e.g., 'Spike: Email delivery approach for newsletter')" },
+        { "id": "open-questions-as-expected-outputs", "text": "The open questions from the spec are reflected in the expected outputs section" },
+        { "id": "spike-acs-not-generic", "text": "The Acceptance Criteria section contains specific deliverables for this spike (not generic boilerplate like 'Findings are documented')" }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Make this a ticket.\n\n# Newsletter subscription form not submitting on iOS Safari\n\n## Why\n\nSince the v2.3 release of the marketing site, the subscribe button on the newsletter form does not trigger a submission when tapped on iOS Safari. This is blocking mobile users from subscribing and affecting the marketing team's acquisition metrics.\n\n## Who\n\n> As a mobile user, I want the subscribe button to work on my iPhone, so that I can sign up for the newsletter.\n\n## What (Acceptance Criteria)\n\n1. Tapping the subscribe button on iOS Safari submits the form.\n2. The success message is shown after a valid submission on mobile.\n3. The fix does not regress form behaviour on other browsers.",
+      "expected_output": "Classified as a Bug. Existing feature broken since v2.3. Rendered bug.md template with expected = form submits correctly, actual = button does not trigger submission on iOS Safari. No Acceptance Criteria section.",
+      "assertions": [
+        { "id": "classifies-as-bug", "text": "Output classifies the spec as a Bug (despite the spec containing a user story)" },
+        { "id": "uses-bug-template", "text": "Output contains '## 🐛 Bug', '## ✅ Expected', and '## ❌ Actual' sections from the bug template" },
+        { "id": "expected-behaviour-present", "text": "The Expected section describes the button submitting the form correctly" },
+        { "id": "actual-behaviour-present", "text": "The Actual section describes the button not triggering submission on iOS Safari" },
+        { "id": "no-acceptance-criteria-section", "text": "Output does NOT contain a '## ✅ Acceptance Criteria' section (bugs use Expected/Actual format, not ACs)" }
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Turn this into a ticket — not sure if this is a story or a spike.\n\n# Personalised email recommendations\n\n## Why\n\nUsers who receive generic newsletters have lower engagement than those who receive content relevant to their usage patterns. We believe personalising newsletter content could improve open rates by 20–30%, but we haven't validated this assumption yet.\n\n## Who\n\n> As a subscribed user, I want to receive newsletter content tailored to my product usage, so that the emails I receive feel relevant and useful.\n\n## What (Acceptance Criteria)\n\n1. Newsletter content varies based on the user's activity in the product.\n2. Users who have not used the product see a default content variant.\n3. Personalisation does not increase email send latency by more than 500ms.\n\n## Open Questions\n\n- Do we have sufficient usage data to personalise meaningfully for most users?\n- What is the minimum viable personalisation signal (last feature used, plan type, etc.)?\n- Should personalisation be opt-in or automatic?",
+      "expected_output": "Classified as a Spike (or clearly explained why it's ambiguous). The open questions indicate the team doesn't yet know if they have the data to build this, and the 20-30% improvement is an unvalidated assumption. Reasoning clearly explained.",
+      "assertions": [
+        { "id": "not-classified-as-story-without-caveat", "text": "Output does NOT classify this as a Story without acknowledging the ambiguity or open questions" },
+        { "id": "reasoning-references-unknowns", "text": "The classification reasoning mentions the unvalidated 20-30% assumption and/or the open questions as the reason it is not a straightforward Story" },
+        { "id": "spike-or-flagged-ambiguous", "text": "Output classifies as Spike OR explicitly flags the tension between Story and Spike with a recommendation" },
+        { "id": "uses-spike-template", "text": "Output uses the Spike template (contains '## 🔬 Spike' section)" }
+      ]
+    }
+  ]
+}
