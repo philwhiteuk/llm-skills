@@ -56,9 +56,10 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 
 | Step | Name | Type | Action |
 |------|------|------|--------|
-| 1a | Issue exists? | ? decision | Parse the prompt for an issue key or link. Search available issue-tracker tools. If found, load it and go to 2a. If not: "Should I create a tracking issue for this?" |
+| 1a | Issue exists? | ? decision | Parse the prompt for an issue key or link. Search available issue-tracker tools. If found, load it and go to 1d. If not: "Should I create a tracking issue for this?" |
 | 1b | Track issue | auto | Gather context (title, description) from the user's prompt. If a spec exists, use it. |
 | 1c | Create issue | auto | Create the issue using available tracker tools. Save the key/link for the rest of the workflow. |
+| 1d | Name session | auto | Rename the session to `ISSUE-KEY: short subtitle` — the subtitle is 3–5 words summarising the issue title. Use `/rename` to set it. |
 | 2a | Spec exists? | ? decision | Check the issue description for structured acceptance criteria. A bare title or one-liner means no spec. If no spec → 2b. If spec exists → 3a. |
 | 2b | Write a spec | auto | Delegate to the spec-write skill. |
 | 2c | Template spec | auto | Delegate to the spec-template skill. |
@@ -89,6 +90,7 @@ Your first job is to figure out the current step. Check these signals in order:
 
 Quick reference:
 - No issue found → 1a
+- Issue found/created, session not yet renamed → 1d
 - Issue exists, bare description → 2a
 - Issue has spec, no plan → 3a
 - Issue has spec + plan, status is "To Do" → 3e
