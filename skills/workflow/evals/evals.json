@@ -85,5 +85,18 @@
         {"text": "links_both_artifacts: Response references both the PR and the JIRA issue in the wrap-up", "type": "qualitative"}
       ]
     }
+    ,
+    {
+      "id": 8,
+      "name": "pr-naming-conventions",
+      "prompt": "The plan for PROJ-789 is approved. We're good to start coding — when we're done I'll need you to create a branch and open the PR.",
+      "expected_output": "Orchestrator recognises plan approval (step 3d → approved), updates status (3e), begins implementation (4a), and when opening the PR uses the correct naming: branch = 'PROJ-789/<kebab-issue-name>' and PR title = '[PROJ-789] - <brief description>'. Should NOT use freeform naming like 'feature/notifications' or 'feat: add notifications'.",
+      "files": [],
+      "assertions": [
+        {"text": "branch_naming: Branch name follows the pattern '<issue-id>/<kebab-case-name>' (e.g. 'PROJ-789/some-feature-name'), not a freeform name", "type": "qualitative"},
+        {"text": "pr_title_naming: PR title follows the pattern '[<issue-id>] - <brief description>' (e.g. '[PROJ-789] - Add notifications'), not a freeform title", "type": "qualitative"},
+        {"text": "does_not_invent_format: Response does NOT use formats like 'feature/...', 'feat(scope):...', or bare descriptions without the issue ID prefix", "type": "qualitative"}
+      ]
+    }
   ]
 }

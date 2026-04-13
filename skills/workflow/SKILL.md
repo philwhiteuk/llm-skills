@@ -72,11 +72,24 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | 3d | Plan approval | **[human]** | Present the plan. "Does this approach work?" If no → back to 3b. If yes → 3e. |
 | 3e | Update status | auto | Transition to "In Progress" or equivalent. |
 | 4a | Implement | auto | Execute the plan step by step. Write code, run tests, verify. |
-| 4b | Draft PR | auto | Open a draft PR linking back to the issue. |
+| 4b | Draft PR | auto | Open a draft PR linking back to the issue. Branch name: `<issue-id>/<kebab-case-issue-name>`. PR title: `[<issue-id>] - <brief description>`. |
 | 4c | PR approval | **[human]** | "PR is ready for review." If feedback → 4d. If approved → 5a. |
 | 4d | Address feedback | auto | Apply feedback, then return to 4c. |
 | 5a | Update status | auto | Transition the issue to "Done" or "In Review". |
 | 5b | Notify team | auto | Send a Slack message linking the PR and issue. Delegate to the slack-message skill. |
+
+## Naming conventions
+
+Always apply these patterns — no exceptions, no variations:
+
+| Artefact | Pattern | Example |
+|----------|---------|---------|
+| Branch | `<issue-id>/<kebab-case-issue-name>` | `PROJ-42/add-user-auth` |
+| PR title | `[<issue-id>] - <brief description>` | `[PROJ-42] - Add user authentication` |
+
+- **Issue ID**: the canonical key from the tracker (e.g. `PROJ-42`, `#123`)
+- **Branch name**: lowercase, hyphens only, derived from the issue title (strip punctuation, truncate if long)
+- **PR description**: brief description in the title should be human-readable — not a copy of the branch slug
 
 ## Determining where you are
 
