@@ -7,8 +7,7 @@ A collection of general-purpose LLM skills that I use in my day-to-day developme
 <!-- SKILLS-INDEX:START -->
 | Skill | Description |
 |-------|-------------|
-| [spec-write](skills/spec-write/SKILL.md) | Write solution-agnostic specifications from meeting notes, requirements, or problem descriptions. Produces clear, outcome-focused specs that avoid prescribing implementation details. |
-| [spec-template](skills/spec-template/SKILL.md) | Classify a spec as a Story, Task, Spike, or Bug and render it in the correct standardised format for sharing with the team. |
+| [spec](skills/spec/SKILL.md) | Write solution-agnostic specifications from raw input and classify them as a Story, Task, Spike, Bug, or Epic — rendered in the correct standardised format for sharing with the team. |
 | [slack-message](skills/slack-message/SKILL.md) | Craft and send beautifully formatted Slack messages using the Slack MCP. Covers technical Q&A replies and PR notifications, with markdown structure, emojis as visual signposts, and guidance on including ticket links and finding recipients. |
 | [workflow](skills/workflow/SKILL.md) | Orchestrate the full software delivery lifecycle — from logging an issue through refinement, implementation, and review. Determines the current step, drives work forward autonomously, and pauses only at human approval gates. |
 | [my-issues](skills/my-issues/SKILL.md) | Fetch and display a quick summary of all your active issues across every board and project. Shows a flat table with project, parent, issue ID, title, status, reporter, and labels — sorted by status urgency so the most actionable work appears first. |
