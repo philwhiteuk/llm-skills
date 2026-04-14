@@ -1,0 +1,51 @@
+{
+  "skill_name": "my-issues",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Show me all my active issues",
+      "expected_output": "A formatted list of active issues assigned to the current user, grouped by project, each showing parent ID (or dash), issue ID, title, status, and reporter. Includes a date header.",
+      "files": [],
+      "assertions": [
+        {"name": "renders-as-list", "description": "Response contains markdown list items (lines starting with '- [')"},
+        {"name": "has-date-header", "description": "Response contains the 'My Active Issues' header with a date"},
+        {"name": "issue-ids-in-bold", "description": "Each list item contains an issue key in bold (e.g. **PROJ-42**)"},
+        {"name": "status-shown", "description": "Each list item includes a status wrapped in underscores (e.g. _In Progress_)"},
+        {"name": "parent-column-present", "description": "Each list item starts with a bracketed parent ID or dash (e.g. [PROJ-10] or [—])"},
+        {"name": "grouped-by-project", "description": "If multiple projects exist, output has ### project group headers"},
+        {"name": "reporter-included", "description": "Each list item includes a reporter / creator name"},
+        {"name": "no-intermediate-narration", "description": "No process narration like 'I will now fetch...' before the list"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What's on my plate right now? I'm trying to figure out where to focus across all the boards I'm on.",
+      "expected_output": "A formatted list of active issues grouped by project with cross-board scope. If >20 issues, includes a count summary at the top.",
+      "files": [],
+      "assertions": [
+        {"name": "renders-as-list", "description": "Response contains markdown list items (lines starting with '- [')"},
+        {"name": "has-date-header", "description": "Response contains the 'My Active Issues' header with a date"},
+        {"name": "issue-ids-in-bold", "description": "Each list item contains an issue key in bold"},
+        {"name": "status-shown", "description": "Each list item includes a status wrapped in underscores"},
+        {"name": "parent-column-present", "description": "Each list item starts with a bracketed parent ID or dash"},
+        {"name": "cross-project-scope", "description": "If issues from multiple projects exist, all are shown (not filtered to single board)"},
+        {"name": "no-intermediate-narration", "description": "No process narration before the list"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Quick status check — what am I currently assigned to?",
+      "expected_output": "A formatted summary of all active issues. Each issue shows parent ID (or dash), issue ID, title, workflow status, and reporter. Grouped by project.",
+      "files": [],
+      "assertions": [
+        {"name": "renders-as-list", "description": "Response contains markdown list items (lines starting with '- [')"},
+        {"name": "has-date-header", "description": "Response contains the 'My Active Issues' header with a date"},
+        {"name": "issue-ids-in-bold", "description": "Each list item contains an issue key in bold"},
+        {"name": "status-shown", "description": "Each list item includes a status wrapped in underscores"},
+        {"name": "parent-column-present", "description": "Each list item starts with a bracketed parent ID or dash"},
+        {"name": "reporter-included", "description": "Each list item includes a reporter / creator name"},
+        {"name": "no-intermediate-narration", "description": "No process narration before the list"}
+      ]
+    }
+  ]
+}
