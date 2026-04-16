@@ -97,6 +97,30 @@
         {"text": "pr_title_naming: PR title follows the pattern '[<issue-id>] - <brief description>' (e.g. '[PROJ-789] - Add notifications'), not a freeform title", "type": "qualitative"},
         {"text": "does_not_invent_format: Response does NOT use formats like 'feature/...', 'feat(scope):...', or bare descriptions without the issue ID prefix", "type": "qualitative"}
       ]
+    },
+    {
+      "id": 9,
+      "name": "spec-written-before-approval",
+      "prompt": "ENG-501 just has a title 'Add password reset flow'. Let's write a spec for it.",
+      "expected_output": "Orchestrator writes the spec and updates the issue description immediately (step 2c), THEN tells the user to review it in the tracker via a link (step 2d). It should NOT present the full spec inline in chat and wait for approval before writing it to the issue.",
+      "files": [],
+      "assertions": [
+        {"text": "spec_written_to_issue_first: Response indicates updating the issue description with the spec before asking for approval — it does not show the full spec inline in chat pending approval", "type": "qualitative"},
+        {"text": "directs_to_tracker: Response directs the user to review the spec in the issue tracker with a clickable link, rather than expecting them to approve it from the chat output", "type": "qualitative"},
+        {"text": "does_not_block_before_writing: Response does NOT present the spec inline in chat and ask 'does this look good?' or equivalent before writing it to the issue", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "clickable-links-always",
+      "prompt": "PROJ-100 is approved, plan looks good, let's implement and open a PR.",
+      "expected_output": "Orchestrator recognises plan approval (3d → approved), updates status (3e), implements (4a), opens a PR (4b), and at every point references the issue and PR as full markdown hyperlinks — not bare IDs like 'PROJ-100' or '#42'.",
+      "files": [],
+      "assertions": [
+        {"text": "issue_link_is_clickable: Any reference to the issue uses a markdown hyperlink (e.g. [PROJ-100](https://...)) rather than the bare ID alone", "type": "qualitative"},
+        {"text": "pr_link_is_clickable: When a PR is created or referenced, it is presented as a clickable markdown link, not just a PR number or branch name", "type": "qualitative"},
+        {"text": "no_bare_ids: Response does NOT refer to issues or PRs using only their ID/number/key without an accompanying hyperlink", "type": "qualitative"}
+      ]
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "name": "develop",
   "description": "a plugin to automate common development tasks",
-  "version": "1.8.0",
+  "version": "1.9.0",
   "author": {
     "name": "Philip White <pjd.white@gmail.com>"
   }
