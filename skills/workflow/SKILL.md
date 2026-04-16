@@ -62,8 +62,8 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | 1d | Name session | auto | Rename the session to `ISSUE-KEY: short subtitle` — the subtitle is 3–5 words summarising the issue title. Use `/rename` to set it. |
 | 2a | Spec exists? | ? decision | Check the issue description for structured acceptance criteria. A bare title or one-liner means no spec. If no spec → 2b. If spec exists → 3a. |
 | 2b | Write & format spec | auto | Delegate to the spec skill — it writes a solution-agnostic spec and classifies/formats it as the right ticket type (Story, Task, Spike, Bug, or Epic). |
-| 2c | Update issue | auto | Write the rendered spec into the issue description. |
-| 2d | Spec approval | **[human]** | Present the spec. "Does this capture the work? Anything to change?" If no → back to 2b. If yes → 2e. |
+| 2c | Update issue | auto | Write the rendered spec into the issue description **immediately — do not wait for approval first**. The tracker is easier to review than a wall of text in chat. |
+| 2d | Spec approval | **[human]** | Say "Spec written to [ISSUE-KEY](<link>) — take a look and let me know if anything needs changing." Do not dump the spec into chat. Wait for the user to confirm in the tracker. If no → back to 2b. If yes → 2e. |
 | 2e | Update status | auto | Transition the issue to reflect refinement progress. |
 | 3a | Plan exists? | ? decision | Check issue comments for an implementation plan (ordered steps, technical approach). If no plan → 3b. If plan exists → 3d. |
 | 3b | Plan to implement | auto | Load the spec from the issue description into context. Read the codebase to understand the landscape. Produce an implementation plan: ordered steps, files to touch, key decisions. Do not pause to ask for input — go straight from reading the spec to producing the plan. |
@@ -111,6 +111,8 @@ Quick reference:
 - PR merged → 5a
 
 ## Principles
+
+**Always use clickable links.** Whenever you reference an issue, PR, or any tracker resource, include its full URL as a markdown link — never just an ID. The user should always be one click away from the artefact.
 
 **Be concise.** Show the checklist, then deliver. No narration of your reasoning.
 

@@ -98,7 +98,7 @@ A new feature **added** to the product. The user story describes an end-user ben
 
 **Task**
 Supporting or infrastructure work **in service of** a feature. The primary "user" is the system, a developer, or an internal team — not an end-user. No direct standalone user benefit; it enables something else.
-> Signal: The "Who" is internal/technical, or the work is clearly a dependency for something bigger.
+> Signal: The "Who" is internal/technical, or the work is clearly a dependency for something bigger. Refactoring, code organisation, infrastructure cleanup, CI/CD, test coverage, and technical debt reduction are always Tasks — even if a user story can be written for them, the benefit is to the team, not a product end-user.
 
 **Spike**
 The **direction is uncertain**. Open questions, major assumptions, or competing approaches need investigation before real work can be scoped. Spikes are timeboxed research — the output is a finding or recommendation, not shipped software.
@@ -110,7 +110,7 @@ An **existing feature is broken** or behaving incorrectly. Corrective work, not 
 
 ### Handling ambiguity
 
-- **Story vs Task**: Does it deliver standalone value to an end-user? If no, it's a Task.
+- **Story vs Task**: Does it deliver standalone value to a product end-user (not a developer or internal team)? If no, it's a Task. Refactoring, separation of concerns, infrastructure work, and code quality improvements are Tasks regardless of how the user story is phrased.
 - **Story vs Spike**: Non-empty Open Questions, or ACs that depend on the implementation → lean Spike.
 - **Epic vs Story**: Could this reasonably be done in one sprint by one team? If no, it's an Epic.
 - **Spike vs Task**: A Spike answers a question; a Task completes a known piece of work.
@@ -119,7 +119,7 @@ If unsure, state your uncertainty and offer a recommendation. The user can overr
 
 ### Rendering
 
-Read the appropriate template from `assets/` and fill in every `{{placeholder}}`. Reproduce all section headers and emoji exactly as written.
+Use your file-reading tool to load the correct template from `assets/` (e.g. `assets/task.md`). Do not reconstruct the template from memory — always read the file. Then fill in every `{{placeholder}}` with the values described below. Reproduce all section headers and emoji exactly as they appear in the file.
 
 **Epic** (`assets/epic.md`):
 - `{{SUMMARY}}` → spec Title
