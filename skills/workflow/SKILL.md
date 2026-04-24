@@ -58,11 +58,11 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | Step | Name | Type | Action |
 |------|------|------|--------|
 | 1a | Issue exists? | ? decision | Parse the prompt for an issue key or link. Search available issue-tracker tools. If found, load it and go to 1d. If not: "Should I create a tracking issue for this?" |
-| 1b | Track issue | auto | Gather context (title, description) from the user's prompt. If a spec exists, use it. |
-| 1c | Create issue | auto | Create the issue using available tracker tools. Save the key/link for the rest of the workflow. |
+| 1b | Track issue | auto | **Always delegate to the spec skill** — it will write a solution-agnostic spec, classify the work type (Story/Task/Spike/Bug/Epic), and render it using the correct template from `assets/`. The spec skill templates ensure consistent, properly formatted issue descriptions. |
+| 1c | Create issue | auto | Create the issue using available tracker tools. Use the **rendered spec from step 1b** as the issue description. Save the key/link for the rest of the workflow. |
 | 1d | Name session | auto | Rename the session to `ISSUE-KEY: short subtitle` — the subtitle is 3–5 words summarising the issue title. Use `/rename` to set it. |
 | 2a | Spec exists? | ? decision | Check the issue description for structured acceptance criteria. A bare title or one-liner means no spec. If no spec → 2b. If spec exists → 3a. |
-| 2b | Write & format spec | auto | Delegate to the spec skill — it writes a solution-agnostic spec and classifies/formats it as the right ticket type (Story, Task, Spike, Bug, or Epic). |
+| 2b | Write & format spec | auto | **Always delegate to the spec skill** — it writes a solution-agnostic spec, classifies the work type, and **renders it using the correct template from `assets/`** (story.md, task.md, spike.md, bug.md, or epic.md). Never write a spec from scratch or use generic formatting. |
 | 2c | Update issue | auto | Write the rendered spec into the issue description **immediately — do not wait for approval first**. The tracker is easier to review than a wall of text in chat. **Do NOT transition the issue status yet — that only happens at 2e, after the user approves.** |
 | 2d | Spec approval | **[human]** | Say "Spec written to [ISSUE-KEY](<link>) — take a look and let me know if anything needs changing." Do not dump the spec into chat. Wait for the user to confirm in the tracker. If no → back to 2b. If yes → 2e. |
 | 2e | Update status | auto | **Only run this step after the user has confirmed approval at 2d.** Transition the issue to reflect refinement progress. |
@@ -127,4 +127,4 @@ Quick reference:
 
 **Don't repeat work.** Spec exists? Skip to planning. Plan exists? Skip to implementation.
 
-**Delegate to skills.** spec for 2b, slack-message for 5b.
+**Always use the spec skill for issue descriptions.** Whether creating a new issue (step 1b) or refining an existing one (step 2b), always delegate to the spec skill. The spec skill ensures consistent formatting using the correct template from `assets/` based on work type classification. Never write issue descriptions directly — always use the spec skill templates. Also delegate to slack-message for 5b.
