@@ -1,0 +1,64 @@
+{
+  "skill_name": "pr-triage",
+  "evals": [
+    {
+      "id": 1,
+      "name": "clean-pr-ready-for-review",
+      "prompt": "Can you check if this PR is ready for my review? https://github.com/acme-corp/payments-service/pull/247",
+      "expected_output": "PR passes all gates (not draft, checks green, links to JIRA ticket). Weights score high — small focused change, one prior review, human-authored commits. Decision: ready. Sends Slack DM with link.",
+      "files": [],
+      "assertions": [
+        "Decision is 'ready' or 'review'",
+        "All three gates (G1, G2, G3) are explicitly evaluated and marked as passed",
+        "Weight scores are computed using the weighted formula (score × multiplier)",
+        "Final weighted percentage is >= 80%",
+        "Slack DM action is mentioned or attempted",
+        "Output follows the structured format (gates section, weights table, decision)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "bloated-agentic-pr-no-spec",
+      "prompt": "Triage this for me: https://github.com/acme-corp/user-service/pull/89",
+      "expected_output": "PR passes G1 and G2 but fails G3 — description is AI-generated list with no acceptance criteria and no linked issue. Decision: not ready. Leaves a friendly comment.",
+      "files": [],
+      "assertions": [
+        "Decision is 'not ready'",
+        "G3 (clear spec) is explicitly identified as the failing gate",
+        "Weight evaluation is skipped because a gate failed",
+        "A PR comment is drafted (not REQUEST_CHANGES)",
+        "The PR comment sounds human-like",
+        "The comment is actionable — tells author what to do"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "draft-pr-early-submission",
+      "prompt": "Is https://github.com/acme-corp/api-gateway/pull/31 worth reviewing yet?",
+      "expected_output": "PR fails G1 — still in draft. Decision: not ready. No action taken.",
+      "files": [],
+      "assertions": [
+        "Decision is 'not ready'",
+        "G1 (draft) is identified as the failing gate",
+        "No action taken — no comment, no Slack",
+        "Explains that author hasn't asked for review yet"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "gates-pass-but-weights-fail",
+      "prompt": "Check this one for me please https://github.com/acme-corp/notifications-service/pull/152",
+      "expected_output": "All gates pass but weights fail. No prior reviews (W1 low), AI co-author with generic commits (W2 low), 34 files for a small config change (W3 very low with 2x). Score well below 80%. Leaves friendly comment about scope.",
+      "files": [],
+      "assertions": [
+        "Decision is 'not ready'",
+        "All three gates pass",
+        "Weight scores computed, final percentage below 80%",
+        "W3 (blast radius) scored low for disproportionate change",
+        "W2 (agentic) scored low due to AI co-author + bloat",
+        "PR comment suggests splitting or scoping",
+        "Comment sounds human-like and actionable"
+      ]
+    }
+  ]
+}

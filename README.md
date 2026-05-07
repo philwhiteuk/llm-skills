@@ -11,6 +11,7 @@ A collection of general-purpose LLM skills that I use in my day-to-day developme
 | [slack-message](skills/slack-message/SKILL.md) | Craft and send beautifully formatted Slack messages using the Slack MCP. Covers technical Q&A replies and PR notifications, with markdown structure, emojis as visual signposts, and guidance on including ticket links and finding recipients. |
 | [workflow](skills/workflow/SKILL.md) | Orchestrate the full software delivery lifecycle — from logging an issue through refinement, implementation, and review. Determines the current step, drives work forward autonomously, and pauses only at human approval gates. |
 | [my-issues](skills/my-issues/SKILL.md) | Fetch and display a quick summary of all your active issues across every board and project. Shows a flat table with project, parent, issue ID, title, status, reporter, and labels — sorted by status urgency so the most actionable work appears first. |
+| [pr-triage](skills/pr-triage/SKILL.md) | Triage a GitHub pull request to determine whether it's ready for human review. Evaluates hard gate checks (draft status, CI, spec clarity) and weighted heuristics (prior reviews, agentic code signals, blast radius). Ready PRs trigger a Slack DM; unready ones get a friendly human-sounding comment on the PR. |
 <!-- SKILLS-INDEX:END -->
 
 ## Installation
