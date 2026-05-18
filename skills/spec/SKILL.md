@@ -121,35 +121,39 @@ If unsure, state your uncertainty and offer a recommendation. The user can overr
 
 Use your file-reading tool to load the correct template from `assets/` (e.g. `assets/task.md`). Do not reconstruct the template from memory — always read the file. Then fill in every `{{placeholder}}` with the values described below. Reproduce all section headers and emoji exactly as they appear in the file.
 
+**The spec Title is the issue's title — not part of the description.** The rendered template is the issue *description* only. Issue trackers display the title as a separate field, so repeating it as an h1 at the top of the description duplicates it in the UI. The templates therefore start at the first `##` heading; surface the title separately when handing the spec to the tracker (e.g. as the `title` argument when creating the issue).
+
 **Epic** (`assets/epic.md`):
-- `{{SUMMARY}}` → spec Title
+- Title → spec Title (used as the issue title; not rendered into the description body)
 - `{{objective}}` → a concise statement of what this initiative sets out to achieve; this is the record of original intent — write it to be meaningful even if nothing else about the epic ever gets updated (1-2 sentences, outcome-focused)
 - `{{why}}` → from the spec's Why section; the problem being solved and why it matters now (2-3 sentences, plain text)
 - `desired_outcomes` → the observable, measurable results that would signal success; derive from the What section or synthesise from the spec's intent. These are not deliverables — they are the changes in the world the initiative should produce (e.g. "customers can self-serve without contacting support", "deployment frequency increases without a rise in incidents"). Bullet list, 2-4 items.
 
 **Story** (`assets/story.md`):
-- `{{SUMMARY}}` → spec Title
+- Title → spec Title (used as the issue title; not rendered into the description body)
 - `{{persona}}` / `{{goal}}` / `{{benefit}}` → parse from the Who section user story
 - `acceptance_criteria` → from What section, as bullet points
 - `discussion_points` → from Open Questions (omit the block entirely if absent)
 
 **Task** (`assets/task.md`):
-- `{{SUMMARY}}` → spec Title
+- Title → spec Title (used as the issue title; not rendered into the description body)
 - `{{task_description}}` → what needs to be done (synthesise from the spec; reframe as a task statement, not a wish)
 - `acceptance_criteria` → from What section
 - `{{context}}` → from Why section (1-2 sentences, plain text)
 
 **Spike** (`assets/spike.md`):
-- `{{SUMMARY}}` → spec Title, prefixed with "Spike: " if not already
+- Title → spec Title, prefixed with "Spike: " if not already (used as the issue title; not rendered into the description body)
 - `{{spike_description}}` → what needs to be investigated and why; frame as a question to answer
 - `{{context}}` → from Why section (plain text)
 - `{{output_1}}`, `{{output_2}}` → concrete deliverables the spike should produce; derive from Open Questions and ACs
 
 **Bug** (`assets/bug.md`):
-- `{{SUMMARY}}` → spec Title
+- Title → spec Title (used as the issue title; not rendered into the description body)
 - `{{expected}}` → what the system *should* do
 - `{{actual}}` → what the system *currently* does incorrectly
 > If the spec doesn't cleanly separate expected vs actual, extract what you can and flag it for the user to verify.
+
+**Never add a top-level h1 to the rendered description.** The description should start with the first `##` from the template. If you find yourself prepending `# <title>`, stop — the title belongs in the tracker's title field, not in the body.
 
 ### After rendering
 
