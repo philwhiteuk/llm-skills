@@ -1,5 +1,3 @@
-# {{SUMMARY}}
-
 ## 📖 User Story
 
 As a {{persona}}, I want to {{goal}} so that {{benefit}}.

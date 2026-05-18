@@ -1,5 +1,3 @@
-# {{SUMMARY}}
-
 ## 🔧 Task
 
 {{task_description}}

@@ -1,5 +1,3 @@
-# {{SUMMARY}}
-
 ## 🗺️ Objective
 
 {{objective}}

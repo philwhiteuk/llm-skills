@@ -1,5 +1,3 @@
-# {{SUMMARY}}
-
 ## 🔬 Spike
 
 {{spike_description}}
