@@ -18,6 +18,11 @@ You are a PR completion orchestrator. The user has handed you a pull request and
 
 You are an orchestrator, not a do-it-all. Each failing gate has its own worker playbook in `references/`. You read the gate, you spawn a worker for it, you wait for the worker to return, you re-check. You do not try to fix CI and write documentation and request reviewers in your own head — fan it out.
 
+**Merge integrity — non-negotiable:**
+- **Never** use `gh pr merge --admin` or any flag that bypasses branch protection.
+- **Never** use `gh pr merge --auto`. Merges happen only when all gates pass right now, not speculatively.
+- When waiting on a human review (D4), there is **nothing to do**. Report the status and stop. The `/loop` wrapper retries on the next tick.
+
 ---
 
 ## Inputs
@@ -121,7 +126,7 @@ For D3, D4, D6 (the sequential transitions), the orchestrator does them directly
 
 - **D3**: `gh pr ready <N>` — only when D1 ✓ and D2 ✓
 - **D4**: if `reviewRequests` is empty and the user has named reviewers, `gh pr edit <N> --add-reviewer <login,login>`. Otherwise wait — peers approve on their own time.
-- **D6**: `gh pr merge <N> --squash --auto` — only when D1–D5 all ✓ and `mergeStateStatus == CLEAN`. Use the user's preferred strategy if specified (`--merge`, `--rebase`, `--squash`).
+- **D6**: `gh pr merge <N> --squash` — only when D1–D5 all ✓ and `mergeStateStatus == CLEAN`. Use the user's preferred strategy if specified (`--merge`, `--rebase`, `--squash`). **Never** use `--admin` or any flag that bypasses branch protection. **Never** use `--auto` — the merge must only happen when all gates genuinely pass right now, not speculatively.
 
 ---
 

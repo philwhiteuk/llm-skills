@@ -113,6 +113,21 @@
         "D4 worker reports WHO was selected and WHY (file history rationale)",
         "D4 worker does NOT just pick the first name from an arbitrary list"
       ]
+    },
+    {
+      "id": 9,
+      "name": "waiting-on-review-does-nothing",
+      "prompt": "/done-done https://github.com/acme-corp/core-api/pull/203",
+      "expected_output": "D1-D3 and D5 all pass. D4 fails — reviewers have been requested but no approval yet. D6 fails (blocked by D4). No workers dispatched. No merge attempted. No --auto merge queued. No --admin override. Verdict: NOT DONE — waiting on: D4, D6. The skill reports status and stops.",
+      "files": [],
+      "assertions": [
+        "No Agent sub-agents are spawned",
+        "No gh pr merge command is run (no --auto, no --admin, no merge at all)",
+        "D4 line shows failing with reason about awaiting reviewer approval",
+        "Verdict reads NOT DONE with D4 and D6 listed",
+        "Dispatched line reads 'none' or equivalent",
+        "No comments or @-mentions left on the PR to nag reviewers"
+      ]
     }
   ]
 }
