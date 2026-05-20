@@ -12,6 +12,7 @@ A collection of general-purpose LLM skills that I use in my day-to-day developme
 | [workflow](skills/workflow/SKILL.md) | Orchestrate the full software delivery lifecycle — from logging an issue through refinement, implementation, and review. Determines the current step, drives work forward autonomously, and pauses only at human approval gates. |
 | [my-issues](skills/my-issues/SKILL.md) | Fetch and display a quick summary of all your active issues across every board and project. Shows a flat table with project, parent, issue ID, title, status, reporter, and labels — sorted by status urgency so the most actionable work appears first. |
 | [pr-triage](skills/pr-triage/SKILL.md) | Triage a GitHub pull request to determine whether it's ready for human review. Evaluates hard gate checks (draft status, CI, spec clarity) and weighted heuristics (prior reviews, agentic code signals, blast radius). Ready PRs trigger a Slack DM; unready ones get a friendly human-sounding comment on the PR. |
+| [done-done](skills/done-done/SKILL.md) | Drive a PR all the way to merged. Evaluates six deterministic gates (code complete, checks green, ready for review, peer approved, documented, merged) in a single GitHub fetch, then orchestrates one focused sub-agent per failing gate to clear it — CI fixes, doc writing, reviewer requests, and merge run in parallel where dependencies allow. Pair with `/loop` to keep driving across CI runs and review waits. |
 <!-- SKILLS-INDEX:END -->
 
 ## Installation

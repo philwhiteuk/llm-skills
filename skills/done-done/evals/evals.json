@@ -1,0 +1,87 @@
+{
+  "skill_name": "done-done",
+  "evals": [
+    {
+      "id": 1,
+      "name": "already-merged-terminal",
+      "prompt": "Is https://github.com/acme-corp/payments-service/pull/247 done done?",
+      "expected_output": "PR is already merged. D6 short-circuits — all six gates report as passing, Verdict: DONE with mergedAt timestamp, no workers dispatched, no further action taken.",
+      "files": [],
+      "assertions": [
+        "Output shows the six-gate checklist with D1 through D6 in order",
+        "All six gates show [x] passing",
+        "Verdict line reads 'Verdict: DONE' and includes a mergedAt reference",
+        "No Agent sub-agents are spawned for this PR",
+        "Only one gh pr view call is made"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "parallel-fix-ci-and-docs",
+      "prompt": "Get this PR over the line: https://github.com/acme-corp/user-service/pull/89",
+      "expected_output": "D1 passes, D2 fails (lint + e2e red), D3 passes, D4 fails (no approval yet), D5 fails (body is 40 chars, no issue link), D6 fails. D2 and D5 are independent — both workers dispatched in the same turn as parallel Agent calls. D4 is dependent on D3 ✓ so the orchestrator requests reviewers inline. D6 not dispatched (D2/D5 still red).",
+      "files": [],
+      "assertions": [
+        "D2 worker and D5 worker are spawned in the SAME assistant turn as parallel Agent tool calls",
+        "Workers receive the absolute path to their playbook in references/, not the playbook content",
+        "D6 is NOT attempted because its prerequisites are not met",
+        "D3 sequential transition is not run (D3 already passes)",
+        "Verdict line reads 'NOT DONE — waiting on: D2, D4, D5' (or equivalent listing the failed gates)",
+        "Dispatched line lists D2 and D5"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "draft-pr-cannot-mark-ready-while-red",
+      "prompt": "/done-done https://github.com/acme-corp/api-gateway/pull/31",
+      "expected_output": "PR is draft with red CI. D1 passes, D2 fails, D3 fails, D4 fails, D5 passes, D6 fails. Dependency graph means D3 cannot be flipped until D2 is green. Orchestrator dispatches D2 worker only; D3 stays pending for the next tick.",
+      "files": [],
+      "assertions": [
+        "D2 worker is dispatched",
+        "Orchestrator does NOT run `gh pr ready` because D2 is still failing",
+        "D4 worker is NOT dispatched because D3 has not yet passed",
+        "Verdict line reflects D2, D3, D4, D6 as still-failing gates",
+        "Dispatched line shows only D2"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "all-green-orchestrator-merges",
+      "prompt": "Finish https://github.com/acme-corp/billing/pull/412",
+      "expected_output": "D1-D5 all pass, D6 is the only failing gate, mergeStateStatus is CLEAN. Orchestrator runs `gh pr merge <N> --squash --auto` inline (no worker), reports the action, next tick will see D6 pass.",
+      "files": [],
+      "assertions": [
+        "Orchestrator runs gh pr merge inline, NOT as an Agent sub-agent",
+        "No worker is dispatched for D6",
+        "The merge command uses --squash --auto by default (or the user's stated preference)",
+        "Output reports the merge attempt and the verdict reflects D6 still pending until next tick"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "self-approval-not-enough",
+      "prompt": "Done done check on https://github.com/acme-corp/infra/pull/77",
+      "expected_output": "reviewDecision is APPROVED but the only approving review's author.login matches the PR author. D4 must fail under the non-author-approver rule. D4 worker is dispatched to find missing reviewers; it surfaces the self-approval issue rather than silently accepting it.",
+      "files": [],
+      "assertions": [
+        "D4 marked failing despite reviewDecision being APPROVED",
+        "Reason on D4 mentions self-approval or missing peer reviewer",
+        "D4 worker is dispatched (D3 already passes)",
+        "Worker does not nag reviewers via comments"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "wip-label-respected-not-stripped",
+      "prompt": "Babysit https://github.com/acme-corp/platform/pull/501 until merged",
+      "expected_output": "PR has a `wip` label and the author's latest comment says 'still working on the e2e tests, hold off'. D1 fails. D1 worker inspects context, decides the WIP marker is intentional, does NOT strip the label, and reports asking the user to confirm before progressing.",
+      "files": [],
+      "assertions": [
+        "D1 worker is dispatched",
+        "Worker does NOT run gh pr edit --remove-label",
+        "Worker reports the author signal looks intentional and asks the user",
+        "No downstream worker (D3, D4) is dispatched because D1 still fails"
+      ]
+    }
+  ]
+}
