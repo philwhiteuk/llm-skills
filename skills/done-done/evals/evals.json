@@ -82,6 +82,37 @@
         "Worker reports the author signal looks intentional and asks the user",
         "No downstream worker (D3, D4) is dispatched because D1 still fails"
       ]
+    },
+    {
+      "id": 7,
+      "name": "author-self-review-comments-block-ready",
+      "prompt": "/done-done https://github.com/acme-corp/data-pipeline/pull/88",
+      "expected_output": "Draft PR where the author has reviewed their own code and left 3 inline comments (a TODO about error handling, a naming suggestion, and a style fix). CI is green (D2 passes). D1 fails because of unresolved author self-review comments. D1 worker addresses the clear fixes (naming and style), skips the design-level TODO, and reports. D3 is NOT flipped to ready because D1 still has an unresolved comment. D1 and D2 run in parallel — D2 does not block D1.",
+      "files": [],
+      "assertions": [
+        "D1 worker is dispatched and fetches author review comments via gh api",
+        "D1 worker addresses clear fixes (naming, style) with commits",
+        "D1 worker does NOT resolve the ambiguous design-level comment",
+        "D1 worker reports which comments were addressed and which were skipped",
+        "D2 does NOT block D1 — they are dispatched in the same turn as parallel workers",
+        "D3 is NOT flipped to ready because D1 still has unresolved author comments",
+        "D4 is NOT dispatched because D3 has not passed"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "reviewer-selected-from-file-history",
+      "prompt": "Get this done: https://github.com/acme-corp/web-app/pull/156",
+      "expected_output": "PR is ready for review (D3 passes), CI green (D2 passes), but no reviewers requested and no approval (D4 fails). D4 worker checks git log for recent contributors to the changed files, identifies the most active contributor (excluding the PR author), and requests them as reviewer via gh pr edit --add-reviewer. Does NOT just pick the first person from a list or use a random contributor.",
+      "files": [],
+      "assertions": [
+        "D4 worker runs git log on the specific files changed in the PR to find recent contributors",
+        "D4 worker excludes the PR author from the candidate list",
+        "D4 worker selects a reviewer based on frequency/recency of contributions to the changed files",
+        "D4 worker requests 1-2 reviewers, not more",
+        "D4 worker reports WHO was selected and WHY (file history rationale)",
+        "D4 worker does NOT just pick the first name from an arbitrary list"
+      ]
     }
   ]
 }

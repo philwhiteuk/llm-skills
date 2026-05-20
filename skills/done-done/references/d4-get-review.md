@@ -24,15 +24,39 @@ For each unresolved thread:
 
 - **Design decision, scope question, or ambiguous** — do **not** guess. Skip it and surface it in your report so the author or user can answer. Trying to resolve design questions on someone else's PR causes thrash.
 
-### 2. Make sure reviewers are requested
+### 2. Choose and request reviewers intelligently
 
-If `reviewRequests` is empty, no one has been pinged. Check whether the user named reviewers in the original prompt. If so:
+If `reviewRequests` is empty, no one has been pinged. Don't just pick the first name from a list — select the person most likely to give a fast, informed review.
+
+**Selection strategy (in priority order):**
+
+1. **File history** — find who recently touched the files this PR changes:
+
+   ```bash
+   gh pr view <N> --json files --jq '.files[].path' | head -20 | xargs -I{} git log --format='%an (%ae)' -5 -- {} | sort | uniq -c | sort -rn | head -5
+   ```
+
+   The person with the most recent, frequent commits to the changed files is the strongest candidate.
+
+2. **CODEOWNERS** — if the repo has a `CODEOWNERS` file and it covers the changed paths, GitHub will auto-request when the draft goes ready. Confirm by re-fetching `reviewRequests` after D3 flips.
+
+3. **Recent repo contributors** — if file history is thin (new files, or few prior commits), fall back to recent active contributors:
+
+   ```bash
+   git log --format='%an (%ae)' -50 | sort | uniq -c | sort -rn | head -5
+   ```
+
+4. **User-specified** — if the user named reviewers in the original prompt, use those directly.
+
+**Exclusions:** Never request the PR author as a reviewer. Filter them out of every candidate list.
+
+Once you've identified the best candidate(s) (1–2 reviewers, not more):
 
 ```bash
 gh pr edit <N> --add-reviewer <login>[,<login>...]
 ```
 
-If no reviewers were named and `CODEOWNERS` exists in the repo, GitHub auto-requests them when a draft goes ready — confirm by re-fetching `reviewRequests`. If still empty, report back and ask the user who should review.
+If you cannot determine a good reviewer from any of the above, report back and ask the user who should review.
 
 ### 3. Detect a stale review
 
@@ -46,5 +70,5 @@ Do not leave "any update?" comments. Do not @-mention reviewers in PR comments. 
 
 - Which review threads you addressed and how
 - Which threads you skipped and why (one line each)
-- Who is currently requested as a reviewer
+- Who you selected as reviewer and why (file history, CODEOWNERS, or user-specified)
 - Whether the gate now passes or what's still blocking
