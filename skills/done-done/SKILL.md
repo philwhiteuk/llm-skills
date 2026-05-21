@@ -18,6 +18,11 @@ You are a PR completion orchestrator. The user has handed you a pull request and
 
 You are an orchestrator, not a do-it-all. Each failing gate has its own worker playbook in `references/`. You read the gate, you spawn a worker for it, you wait for the worker to return, you re-check. You do not try to fix CI and write documentation and request reviewers in your own head — fan it out.
 
+**Merge integrity — non-negotiable:**
+- **Never** use `gh pr merge --admin` or any flag that bypasses branch protection.
+- **Never** use `gh pr merge --auto`. Merges happen only when all gates pass right now, not speculatively.
+- When waiting on a human review (D4), there is **nothing to do**. Report the status and stop. The `/loop` wrapper retries on the next tick.
+
 ---
 
 ## Inputs
@@ -41,7 +46,7 @@ gh pr view <PR_REF> --json \
   number,title,url,isDraft,state,mergeable,mergeStateStatus,merged,mergedAt,\
   author,labels,body,headRefName,baseRefName,\
   statusCheckRollup,reviewDecision,reviews,latestReviews,reviewRequests,\
-  files
+  comments,files
 ```
 
 If the call fails, report the failure on a single line and stop. Do not retry inside the skill — the `/loop` wrapper retries on the next tick.
@@ -54,7 +59,7 @@ Each gate is a pure function of the JSON. Evaluate **every** gate — never shor
 
 | ID | Gate | Pass condition (deterministic) |
 |----|------|-------------------------------|
-| D1 | Code complete | `labels` contains none of `wip`, `do-not-merge`, `hold`, `blocked` (case-insensitive substring) **AND** `title` does not start with `WIP`, `[WIP]`, `Draft:`, or `DRAFT` (case-insensitive) |
+| D1 | Code complete | `labels` contains none of `wip`, `do-not-merge`, `hold`, `blocked` (case-insensitive substring) **AND** `title` does not start with `WIP`, `[WIP]`, `Draft:`, or `DRAFT` (case-insensitive) **AND** no unresolved review comments from the PR author exist (self-review feedback must be addressed before the PR is ready for peer review) |
 | D2 | Checks passing | Every entry in `statusCheckRollup` has `conclusion` in `{SUCCESS, NEUTRAL, SKIPPED}` **AND** none have `status` of `IN_PROGRESS`, `QUEUED`, or `PENDING`. Empty rollup → **fail** |
 | D3 | Ready for review | `isDraft == false` |
 | D4 | Peer reviewed | `reviewDecision == "APPROVED"` **AND** `latestReviews` contains at least one `APPROVED` review where `author.login != PR.author.login` |
@@ -63,6 +68,7 @@ Each gate is a pure function of the JSON. Evaluate **every** gate — never shor
 
 **Borderline cases — codified so the answer is the same every run:**
 
+- **D1 includes author self-review comments.** Authors often draft a PR and review it themselves, leaving comments they want addressed before peer review. Those unresolved author comments are a "not finished" signal just like a WIP label — they block D3 (ready for review) alongside D2, and the D1 worker resolves them in parallel with CI.
 - **D2 empty rollup fails.** No CI is not green CI; the safety net must exist.
 - **`NEUTRAL` and `SKIPPED` count as success** — GitHub uses these for conditional / path-filtered jobs.
 - **D4 needs both `reviewDecision == APPROVED` and a non-author approver** — protects against self-approval via bots.
@@ -120,7 +126,7 @@ For D3, D4, D6 (the sequential transitions), the orchestrator does them directly
 
 - **D3**: `gh pr ready <N>` — only when D1 ✓ and D2 ✓
 - **D4**: if `reviewRequests` is empty and the user has named reviewers, `gh pr edit <N> --add-reviewer <login,login>`. Otherwise wait — peers approve on their own time.
-- **D6**: `gh pr merge <N> --squash --auto` — only when D1–D5 all ✓ and `mergeStateStatus == CLEAN`. Use the user's preferred strategy if specified (`--merge`, `--rebase`, `--squash`).
+- **D6**: `gh pr merge <N> --squash` — only when D1–D5 all ✓ and `mergeStateStatus == CLEAN`. Use the user's preferred strategy if specified (`--merge`, `--rebase`, `--squash`). **Never** use `--admin` or any flag that bypasses branch protection. **Never** use `--auto` — the merge must only happen when all gates genuinely pass right now, not speculatively.
 
 ---
 
@@ -171,7 +177,7 @@ Per-tick discipline to keep loops cheap:
 
 A longer checklist looks more thorough but introduces ambiguity, and ambiguous gates make the verdict flap between runs. Each of D1–D6 maps to a single JSON field (or a regex over one field) and answers a question the user actually cares about:
 
-- D1: Has the author signalled this is finished work?
+- D1: Has the author signalled this is finished work? (includes self-review comments being addressed)
 - D2: Did the automated safety net pass?
 - D3: Has the author handed it over for review?
 - D4: Has a human other than the author signed off?
