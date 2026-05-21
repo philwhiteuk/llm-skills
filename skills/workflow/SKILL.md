@@ -62,15 +62,13 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | 1c | Create issue | auto | Create the issue using available tracker tools. Use the **rendered spec from step 1b** as the issue description. Save the key/link for the rest of the workflow. |
 | 1d | Name session | auto | Rename the session to `ISSUE-KEY: short subtitle` — the subtitle is 3–5 words summarising the issue title. Use `/rename` to set it. |
 | 2a | Spec exists? | ? decision | Check the issue description for structured acceptance criteria. A bare title or one-liner means no spec. If no spec → 2b. If spec exists → 3a. |
-| 2b | Write & format spec | auto | **Always delegate to the spec skill** — it writes a solution-agnostic spec, classifies the work type, and **renders it using the correct template from `assets/`** (story.md, task.md, spike.md, bug.md, or epic.md). Never write a spec from scratch or use generic formatting. |
-| 2c | Update issue | auto | Write the rendered spec into the issue description **immediately — do not wait for approval first**. The tracker is easier to review than a wall of text in chat. **Do NOT transition the issue status yet — that only happens at 2e, after the user approves.** |
-| 2d | Spec approval | **[human]** | Say "Spec written to [ISSUE-KEY](<link>) — take a look and let me know if anything needs changing." Do not dump the spec into chat. Wait for the user to confirm in the tracker. If no → back to 2b. If yes → 2e. |
-| 2e | Update status | auto | **Only run this step after the user has confirmed approval at 2d.** Transition the issue to reflect refinement progress. |
-| 3a | Plan exists? | ? decision | Check issue comments for an implementation plan (ordered steps, technical approach). If no plan → 3b. If plan exists → 3d. |
-| 3b | Plan to implement | auto | Load the spec from the issue description into context. Read the codebase to understand the landscape. Produce an implementation plan: ordered steps, files to touch, key decisions. Do not pause to ask for input — go straight from reading the spec to producing the plan. |
-| 3c | Comment on issue | auto | Persist the plan as a comment on the issue. |
-| 3d | Plan approval | **[human]** | Present the plan. "Does this approach work?" If no → back to 3b. If yes → 3e. |
-| 3e | Update status | auto | **Only run this step after the user has confirmed approval at 3d.** Immediately transition the issue to "In Progress" (or equivalent). Do this before writing any code. |
+| 2b | Write spec to issue | auto | **Delegate to the spec skill** to produce the spec, then **immediately write it into the issue description** — both happen in this step, no pausing between them. The spec skill classifies the work type and renders it using the correct template from `assets/`. Once rendered, update the issue description via the tracker API before doing anything else. The issue tracker is the user's review surface, not chat. **Do NOT transition the issue status yet — that only happens at 2d.** |
+| 2c | Spec approval | **[human]** | Say "Spec written to [ISSUE-KEY](<link>) — take a look and let me know if anything needs changing." Do not dump the spec into chat. Wait for the user to confirm in the tracker. If no → back to 2b. If yes → 2d. |
+| 2d | Update status | auto | **Only run this step after the user has confirmed approval at 2c.** Transition the issue to reflect refinement progress. |
+| 3a | Plan exists? | ? decision | Check issue comments for an implementation plan (ordered steps, technical approach). If no plan → 3b. If plan exists → 3c. |
+| 3b | Plan to issue | auto | Load the spec from the issue description into context. Read the codebase to understand the landscape. Produce an implementation plan (ordered steps, files to touch, key decisions), then **immediately persist it as a comment on the issue** — both happen in this step, no pausing between them. The issue tracker is the user's review surface, not chat. Do not pause to ask for input — go straight from reading the spec to producing and posting the plan. |
+| 3c | Plan approval | **[human]** | Say "Implementation plan added to [ISSUE-KEY](<link>) — take a look and let me know if the approach works." Do not dump the plan into chat. Wait for the user to confirm in the tracker. If no → back to 3b. If yes → 3d. |
+| 3d | Update status | auto | **Only run this step after the user has confirmed approval at 3c.** Immediately transition the issue to "In Progress" (or equivalent). Do this before writing any code. |
 | 4a | Implement | auto | Execute the plan step by step. Write code, run tests, verify. |
 | 4b | Draft PR | auto | Open a **draft** PR using `gh pr create --draft` — never omit `--draft`. Link back to the issue. Branch name: `<issue-id>/<kebab-case-issue-name>`. PR title: `[<issue-id>] - <brief description>`. After opening, transition the issue status to "In Review" (or equivalent). |
 | 4c | PR approval | **[human]** | Say "Draft PR opened at <link> — please review and let me know when it's ready to mark as ready for review." Wait for explicit user approval before converting to ready-for-review. **Never** mark the PR as ready for review without the user's say-so. If feedback → 4d. If approved → mark PR ready for review, then 5a. |
@@ -106,7 +104,7 @@ Quick reference:
 - Issue found/created, session not yet renamed → 1d
 - Issue exists, bare description → 2a
 - Issue has spec, no plan → 3a
-- Issue has spec + plan, status is "To Do" → 3e
+- Issue has spec + plan, status is "To Do" → 3d
 - Issue "In Progress", no PR → 4a
 - Issue "In Progress", PR open → 4c
 - PR merged → 5a
@@ -117,9 +115,9 @@ Quick reference:
 
 **Be concise.** Show the checklist, then deliver. No narration of your reasoning.
 
-**Act, don't ask.** There are exactly three pause points in this workflow: 2d (spec approval), 3d (plan approval), and 4c (PR approval). Every other step is autonomous — execute it immediately. Never say "here is what I would do" or "shall I go ahead?" at an auto step. Load the issue, read the spec, write the plan, open the PR — just do it. The user does not want to approve intermediate actions; they want to see deliverables at the gates.
+**Act, don't ask.** There are exactly three pause points in this workflow: 2c (spec approval), 3c (plan approval), and 4c (PR approval). Every other step is autonomous — execute it immediately. Never say "here is what I would do" or "shall I go ahead?" at an auto step. Load the issue, read the spec, write the plan, open the PR — just do it. The user does not want to approve intermediate actions; they want to see deliverables at the gates.
 
-**Status updates are gated.** Never transition an issue status before the corresponding approval gate. 2e fires after 2d approval. 3e fires after 3d approval. 4b's status update fires when the draft PR is opened.
+**Status updates are gated.** Never transition an issue status before the corresponding approval gate. 2d fires after 2c approval. 3d fires after 3c approval. 4b's status update fires when the draft PR is opened.
 
 **PRs are always drafts.** Always use `gh pr create --draft`. Never mark a PR as ready for review without explicit user approval at 4c. The user must review the diff before the PR goes to the team.
 
