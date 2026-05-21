@@ -6,8 +6,10 @@ description: >
   merges", "see this through", "make sure PROJ-123 ships", or shares a PR they want pushed
   across the line. The skill evaluates six deterministic gates (code complete, checks green,
   ready for review, peer approved, documented, merged) against a single GitHub payload, then
-  fans out one focused sub-agent per failing gate to do the actual work in parallel. Pair with
-  `/loop` (e.g. `/loop 10m /done-done <PR>`) to keep driving across review waits and CI runs.
+  fans out one focused sub-agent per failing gate to do the actual work in parallel. Resolves
+  author self-review comments before marking ready for peer review. Selects reviewers from
+  file history. Never uses admin override or auto-merge. Pair with `/loop` (e.g.
+  `/loop 10m /done-done <PR>`) to keep driving across review waits and CI runs.
 ---
 
 # Done-Done
