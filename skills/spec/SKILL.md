@@ -45,6 +45,8 @@ A spec that names technologies constrains the team before they've had a chance t
 
 **Be concise.** A spec is a communication tool, not a novel. The Why should be 2-3 sentences. Out of Scope and Open Questions should be short bullet lists.
 
+**Implementation detail from fact-finding is input, not spec content.** You will often reach this skill with the implementation already worked out — e.g. after a grilling or fact-finding session that resolved how to build the thing. That detail sharpens your confidence and removes Open Questions; it does **not** belong in the spec. The spec still captures intent and observable outcomes only. A spec written *after* fact-finding should look almost identical to one written *before* it — same shape, just fewer unknowns. If you catch yourself transcribing decisions like "store it in the X table", "add a Y endpoint", or "use the Z library", stop: those belong in the implementation plan that comes later (e.g. `/to-issues`), not here. When in doubt, park hard-won technical decisions in a short note to the user ("the grilling settled on X — I've left it out of the spec; it'll land in the plan") rather than in the spec body.
+
 ### Spec structure
 
 ```
@@ -88,6 +90,10 @@ Once you have a spec (written above or supplied by the user), classify it and re
 
 ### Classification rules
 
+**Classify by the nature of the work and who benefits — never by how much you already know about how to build it.** A fully-designed new feature is still a Story. Having the implementation worked out (e.g. from a prior fact-finding session) is **not** a reason to choose Task — the Task type exists for work whose *beneficiary* is internal (the system, a developer, an internal team), not for "Stories I happen to know how to build." Do not reach for Task just because you have implementation detail and the Task template feels like a place to put it; that detail does not belong in the spec at all (see Step 1).
+
+**Default to Story for any new user-facing capability.** If the work adds something an end-user can see, do, or benefit from, it's a Story — even if it's small, and even if the build is fully specced. Only downgrade to Task when the beneficiary is genuinely internal. In a healthy feature backlog most tickets are Stories; Tasks, Spikes and Bugs are the minority. If you find yourself classifying new-feature work as Tasks, that's the signal this contamination is happening.
+
 **Epic**
 A large, strategic initiative spanning multiple features or teams. Too big to deliver in a single sprint — it will be broken into child Stories, Tasks, or Spikes. The goal is a significant product or business outcome, not a single user workflow.
 > Signal: Multiple user stories are needed to describe the scope, or the work would clearly take many sprints. Language like "platform", "programme", "initiative", "phase", or explicit mention of sub-features.
@@ -110,7 +116,7 @@ An **existing feature is broken** or behaving incorrectly. Corrective work, not 
 
 ### Handling ambiguity
 
-- **Story vs Task**: Does it deliver standalone value to a product end-user (not a developer or internal team)? If no, it's a Task. Refactoring, separation of concerns, infrastructure work, and code quality improvements are Tasks regardless of how the user story is phrased.
+- **Story vs Task**: The question is *who benefits*, never *how much is known*. Does it deliver standalone value to a product end-user (not a developer or internal team)? If yes, it's a Story — no matter how thoroughly the implementation has been worked out. If no, it's a Task. Refactoring, separation of concerns, infrastructure work, and code quality improvements are Tasks regardless of how the user story is phrased. Worked-out implementation detail is **not** a Task signal.
 - **Story vs Spike**: Non-empty Open Questions, or ACs that depend on the implementation → lean Spike.
 - **Epic vs Story**: Could this reasonably be done in one sprint by one team? If no, it's an Epic.
 - **Spike vs Task**: A Spike answers a question; a Task completes a known piece of work.
