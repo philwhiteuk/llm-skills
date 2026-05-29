@@ -155,10 +155,3 @@ Use your file-reading tool to load the correct template from `assets/` (e.g. `as
 
 **Never add a top-level h1 to the rendered description.** The description should start with the first `##` from the template. If you find yourself prepending `# <title>`, stop — the title belongs in the tracker's title field, not in the body.
 
-### After rendering
-
-Show the rendered output as a Markdown code block so it's easy to copy. Then say:
-
-> "Classified as a **[Type]** because [brief reason — 1-2 sentences]. Does this look right, or would you like to reclassify or adjust anything?"
-
-Don't ask more than one follow-up question. Keep it tight.
