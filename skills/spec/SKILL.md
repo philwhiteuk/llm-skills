@@ -3,11 +3,12 @@ name: spec
 description: >
   Write and format software specifications for an engineering team. Use this skill whenever the
   user wants to write a spec, draft requirements, turn meeting notes into a specification, create
-  acceptance criteria, classify a piece of work, or format a spec as a ticket (Story, Task, Spike,
-  Bug, or Epic). Also trigger when the user says things like "write me a spec", "make this a ticket",
-  "what type of work is this?", "turn this into a story/task/spike/bug/epic", "format this for
-  the team", "user stories", "acceptance criteria", or "requirements doc". Use this skill even
-  if the user only has rough notes — you can help shape them into a spec.
+  acceptance criteria, classify a piece of work, or format a spec as a ticket (Story, Task,
+  Refactor, Spike, Bug, or Epic). Also trigger when the user says things like "write me a spec",
+  "make this a ticket", "what type of work is this?", "turn this into a story/task/refactor/spike/bug/epic",
+  "spec out a refactor", "format this for the team", "user stories", "acceptance criteria", or
+  "requirements doc". Use this skill even if the user only has rough notes — you can help shape
+  them into a spec.
 ---
 
 # Spec
@@ -15,7 +16,7 @@ description: >
 You help an Engineering Lead go from raw input to a formatted, shareable ticket in two steps:
 
 1. **Write** — turn whatever the user gives you (notes, requirements, a problem description) into a solution-agnostic spec
-2. **Classify & format** — classify the spec as a Story, Task, Spike, Bug, or Epic and render it using the right template from `assets/`
+2. **Classify & format** — classify the spec as a Story, Task, Refactor, Spike, Bug, or Epic and render it using the right template from `assets/`
 
 If the user already has a well-formed spec, skip straight to step 2. If they only have rough input, do step 1 first, then proceed.
 
@@ -46,6 +47,8 @@ A spec that names technologies constrains the team before they've had a chance t
 **Be concise.** A spec is a communication tool, not a novel. The Why should be 2-3 sentences. Out of Scope and Open Questions should be short bullet lists.
 
 **Implementation detail from fact-finding is input, not spec content.** You will often reach this skill with the implementation already worked out — e.g. after a grilling or fact-finding session that resolved how to build the thing. That detail sharpens your confidence and removes Open Questions; it does **not** belong in the spec. The spec still captures intent and observable outcomes only. A spec written *after* fact-finding should look almost identical to one written *before* it — same shape, just fewer unknowns. If you catch yourself transcribing decisions like "store it in the X table", "add a Y endpoint", or "use the Z library", stop: those belong in the implementation plan that comes later (e.g. `/to-issues`), not here. When in doubt, park hard-won technical decisions in a short note to the user ("the grilling settled on X — I've left it out of the spec; it'll land in the plan") rather than in the spec body.
+
+**Exception — Refactors.** A Refactor is the one type where the mechanism *is* the deliverable, so naming the target structure (modules, boundaries, patterns, the shape to move from and to) is legitimate, expected spec content. Discipline doesn't disappear, it relocates: the **pain points** describe real friction in the code today (what makes change hard — never "because it's cleaner"), and **behaviour-preservation** is the defining invariant — a Refactor changes structure, not what the system does. If observable behaviour changes, the work is a Story, Bug, or Task — not a Refactor. So: implementation detail in a Refactor's before/after table is correct; everywhere else it's still contamination.
 
 ### Spec structure
 
@@ -103,8 +106,12 @@ A new feature **added** to the product. The user story describes an end-user ben
 > Signal: "As a [end user], I want to..." with ACs describing visible behaviour. No significant Open Questions.
 
 **Task**
-Supporting or infrastructure work **in service of** a feature. The primary "user" is the system, a developer, or an internal team — not an end-user. No direct standalone user benefit; it enables something else.
-> Signal: The "Who" is internal/technical, or the work is clearly a dependency for something bigger. Refactoring, code organisation, infrastructure cleanup, CI/CD, test coverage, and technical debt reduction are always Tasks — even if a user story can be written for them, the benefit is to the team, not a product end-user.
+Supporting or infrastructure work **in service of** a feature that produces something *new* internally rather than restructuring what already exists. The primary "user" is the system, a developer, or an internal team — not an end-user. No direct standalone user benefit; it enables something else.
+> Signal: The "Who" is internal/technical, or the work is clearly a dependency for something bigger. Net-new internal work — CI/CD setup, adding test coverage, provisioning infrastructure, internal tooling, dependency upgrades — is a Task. Behaviour-preserving restructuring of existing code is **not** a Task; that's a Refactor (see below).
+
+**Refactor**
+Behaviour-preserving restructuring of existing code. The deliverable is a change in *internal structure* with **no observable change** to what the system does — it prepares the codebase and improves the code path for change. Covers both work that enables specific upcoming feature(s) ("make the change easy, then make the easy change") and standalone technical-debt paydown. Unlike every other type, the spec legitimately names the target structure (see the Refactors exception in Step 1).
+> Signal: Code organisation, separation of concerns, extracting/consolidating modules, untangling coupling, technical-debt reduction — where existing behaviour is held constant and the same tests still pass. If behaviour changes, it isn't a Refactor.
 
 **Spike**
 The **direction is uncertain**. Open questions, major assumptions, or competing approaches need investigation before real work can be scoped. Spikes are timeboxed research — the output is a finding or recommendation, not shipped software.
@@ -116,7 +123,9 @@ An **existing feature is broken** or behaving incorrectly. Corrective work, not 
 
 ### Handling ambiguity
 
-- **Story vs Task**: The question is *who benefits*, never *how much is known*. Does it deliver standalone value to a product end-user (not a developer or internal team)? If yes, it's a Story — no matter how thoroughly the implementation has been worked out. If no, it's a Task. Refactoring, separation of concerns, infrastructure work, and code quality improvements are Tasks regardless of how the user story is phrased. Worked-out implementation detail is **not** a Task signal.
+- **Story vs Task**: The question is *who benefits*, never *how much is known*. Does it deliver standalone value to a product end-user (not a developer or internal team)? If yes, it's a Story — no matter how thoroughly the implementation has been worked out. If no, it's a Task or Refactor. Worked-out implementation detail is **not** a Task signal.
+- **Refactor vs Task**: Both are internal, but the test is whether existing code is being *restructured*. A Refactor changes the shape of code that already exists while holding behaviour constant; a Task produces something new internally (a pipeline, test coverage, tooling). "Improve / reorganise / extract / decouple existing X" → Refactor. "Add / set up / provision new Y" → Task.
+- **Refactor vs Story**: If the change is observable to an end-user, it's a Story (or a Bug), even if it touches structure on the way. A true Refactor is invisible from the outside — same behaviour, same tests pass.
 - **Story vs Spike**: Non-empty Open Questions, or ACs that depend on the implementation → lean Spike.
 - **Epic vs Story**: Could this reasonably be done in one sprint by one team? If no, it's an Epic.
 - **Spike vs Task**: A Spike answers a question; a Task completes a known piece of work.
@@ -146,6 +155,12 @@ Use your file-reading tool to load the correct template from `assets/` (e.g. `as
 - `{{task_description}}` → what needs to be done (synthesise from the spec; reframe as a task statement, not a wish)
 - `acceptance_criteria` → from What section
 - `{{context}}` → from Why section (1-2 sentences, plain text)
+
+**Refactor** (`assets/refactor.md`):
+- Title → spec Title (used as the issue title; not rendered into the description body)
+- `{{summary}}` → one or two sentences framing the structural change and its boundary. Keep it short — the pain points and table carry the detail.
+- `pain_points` → bullet list of the problems with the code today that motivate the refactor: the friction, coupling, risk, or duplication that makes change hard. This is the "why" — keep each point concrete and observable to a developer.
+- `changes` → the deliverable: a before/after table, one row per area being changed. Each row has `area` (the thing being changed — a module, layer, dependency, pattern), `before` (its current shape) and `after` (its target shape). Unlike other types, name concrete structure here (modules, patterns, boundaries). Aim for one row per distinct move; a single row is fine if there's only one.
 
 **Spike** (`assets/spike.md`):
 - Title → spec Title, prefixed with "Spike: " if not already (used as the issue title; not rendered into the description body)
