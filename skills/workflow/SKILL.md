@@ -58,7 +58,7 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | Step | Name | Type | Action |
 |------|------|------|--------|
 | 1a | Issue exists? | ? decision | Parse the prompt for an issue key or link. Search available issue-tracker tools. If found, load it and go to 1d. If not: "Should I create a tracking issue for this?" |
-| 1b | Track issue | auto | **Always delegate to the spec skill** — it will write a solution-agnostic spec, classify the work type (Story/Task/Spike/Bug/Epic), and render it using the correct template from `assets/`. The spec skill templates ensure consistent, properly formatted issue descriptions. |
+| 1b | Track issue | auto | **Always delegate to the spec skill** — it will write a solution-agnostic spec, classify the work type (Story/Task/Refactor/Spike/Bug/Epic), and render it using the correct template from `assets/`. The spec skill templates ensure consistent, properly formatted issue descriptions. |
 | 1c | Create issue | auto | Create the issue using available tracker tools. Use the **rendered spec from step 1b** as the issue description. Save the key/link for the rest of the workflow. |
 | 1d | Name session | auto | Rename the session to `ISSUE-KEY: short subtitle` — the subtitle is 3–5 words summarising the issue title. Use `/rename` to set it. |
 | 2a | Spec exists? | ? decision | Check the issue description for structured acceptance criteria. A bare title or one-liner means no spec. If no spec → 2b. If spec exists → 3a. |
