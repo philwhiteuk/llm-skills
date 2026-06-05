@@ -1,0 +1,59 @@
+{
+  "skill_name": "plan",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Here's an approved spec:\n\n### Title\nSelf-service order tracking page\n\n### Why\nCustomers email support constantly asking where their order is. A self-service view cuts that support load.\n\n### Who\nAs a logged-in customer, I want to see the status of every order I've placed in the last 12 months, so that I don't have to email support.\n\n### What\n1. Logged-in customers can view a list of their orders from the last 12 months\n2. Each order shows current status and a delivery estimate\n3. A carrier tracking link is shown when one is available\n\nThe codebase is a TypeScript Next.js app with a Postgres DB accessed via Prisma. There's an existing `orders` table and an authenticated `/account` route group. Carrier tracking data comes from a third-party API we already call elsewhere for the admin panel. Write the implementation plan.",
+      "expected_output": "A structured implementation plan with Approach (one sentence), a Changes table, a Breakdown citing real-ish symbols/paths, a Files table, and a Test Strategy mapped to the three ACs. Should contain no status-quo description, no rationale/why, no risks/tradeoffs, no open-questions section, and no thought-process preamble.",
+      "assertions": [
+        "Plan has a '🎯 Approach' section and it is a single sentence",
+        "Plan has a '🔧 Changes' section rendered as a markdown table (logical units of work with one-line summaries)",
+        "Plan has a '🛠️ Breakdown' section expanding the changes with concrete detail (signatures, snippets, data shapes, or paths)",
+        "Plan has a '📂 Files' section rendered as a markdown table listing files created/modified/deleted",
+        "Plan has a '🧪 Test Strategy' section that maps to the three acceptance criteria",
+        "Section headers and emoji match the template exactly (🎯 Approach, 🔧 Changes, 🛠️ Breakdown, 📂 Files, 🧪 Test Strategy)",
+        "Breakdown references concrete paths/symbols consistent with the described stack (Next.js routes, Prisma models)",
+        "Plan contains NO open-questions or assumptions section",
+        "Plan contains NO status-quo/background re-description of the current system",
+        "Plan contains NO why/justification prose (states decisions, not the case for them)",
+        "Plan contains NO risks-considered or tradeoffs/rejected-alternatives section",
+        "Plan opens directly with the Approach — no 'here's my thinking'/'let me walk through' preamble"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We've got an approved spec for adding rate limiting to our public API:\n\n### Title\nProtect public API from abuse\n\n### Why\nA handful of clients are hammering the API and degrading service for everyone.\n\n### What\n1. Requests beyond a per-client threshold are rejected with a clear error\n2. Clients can see their current usage against the limit\n3. Internal services are not affected by the limit\n\nThe API is a Python FastAPI service behind a load balancer; we run multiple replicas. There's a Redis instance available. Plan the implementation.",
+      "expected_output": "The spec is genuinely ambiguous on shape-changing decisions (what the per-client threshold is, how a 'client' is identified, whether limits are global-across-replicas or per-replica, what 'internal services' means for exemption). A good run asks these blocking questions BEFORE writing the plan, rather than producing a plan full of assumptions or an open-questions section. After answers it would produce a decisive plan.",
+      "assertions": [
+        "Run surfaced blocking clarifying questions BEFORE writing the plan",
+        "Clarifying questions cover shape-changing forks: how a 'client' is identified, the threshold value/window, cross-replica vs per-replica counting, and what counts as an exempt 'internal service'",
+        "Clarifying questions are concrete and offer options, not vague",
+        "Plan has a '🎯 Approach' section and it is a single sentence",
+        "Plan has a '🔧 Changes' table, a '🛠️ Breakdown', a '📂 Files' table, and a '🧪 Test Strategy' section",
+        "Section headers and emoji match the template exactly",
+        "Test Strategy maps to the three acceptance criteria (rejection, usage visibility, internal exemption)",
+        "The plan artefact itself contains NO open-questions or assumptions section despite the underlying ambiguity",
+        "Plan contains NO status-quo/background, NO why/justification prose, and NO risks/tradeoffs section",
+        "Plan opens directly with the Approach — no thought-process preamble",
+        "Plan commits to specific decisions (e.g. a concrete identification scheme and a cross-replica Redis counter) rather than hedging"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Quick one — approved spec:\n\n### Title\nAdd a /healthz endpoint\n\n### Why\nOur load balancer needs a liveness probe; right now it pings / which does real work.\n\n### What\n1. GET /healthz returns 200 with body 'ok' when the service is up\n2. The endpoint does no database or downstream calls\n\nIt's a Go service using the chi router; routes are registered in `internal/server/routes.go`. Write the plan.",
+      "expected_output": "A very short plan proportional to a trivial change — likely a one-sentence Approach, a one- or two-row Changes table, a brief Breakdown, a small Files table, and a one-line Test Strategy. Should NOT be inflated with ceremony, and should not ask unnecessary clarifying questions (there are no shape-changing ambiguities here). No open questions, no rationale padding.",
+      "assertions": [
+        "Plan has a '🎯 Approach' section and it is a single sentence",
+        "Plan has a '🔧 Changes' table, a '🛠️ Breakdown', a '📂 Files' table, and a '🧪 Test Strategy' section",
+        "Section headers and emoji match the template exactly",
+        "Plan is short and proportional to a trivial change (roughly 30 lines or fewer of rendered markdown)",
+        "Changes table has only one or two rows — the work is not inflated into ceremony",
+        "Breakdown references the chi router and the real path internal/server/routes.go",
+        "Test Strategy is brief and maps to the two acceptance criteria (200 'ok'; no DB/downstream calls)",
+        "Run did NOT ask unnecessary clarifying questions — there are no shape-changing ambiguities here",
+        "Plan contains NO open-questions/assumptions section, NO status-quo, NO why/justification, NO risks/tradeoffs",
+        "Plan opens directly with the Approach — no preamble"
+      ]
+    }
+  ]
+}
