@@ -83,15 +83,15 @@ sections, and how to keep each one honest:
 
 - **🎯 Approach** — one sentence naming the strategy. If it needs two, the plan may be doing two
   things; consider whether the spec should have been split.
-- **🔧 Changes** — a table of the logical units of work, each with a one-line summary. This is the
-  at-a-glance map; the reader should grasp the whole shape from this table alone.
-- **🛠️ Breakdown** — one subsection per change from the table, in the same order. This is where
+- **🛠️ Change Summary** — a table of the logical units of work, each with a one-line summary. This is
+  the at-a-glance map; the reader should grasp the whole shape from this table alone.
+- **🧱 Breakdown** — one subsection per change from the table, in the same order. This is where
   detail lives: signatures, snippets, data shapes, call sequences — whatever an engineer needs to
   build it without guessing. Terse prose and code, not essays. Skip a change's subsection only if its
   one-liner in the table is genuinely complete.
-- **📂 Files** — the physical surface area: every file created, modified, or deleted, one row each.
-  The Changes table is logical (what we're doing); this is physical (where it lands). Both earn their
-  place because they answer different questions a reader has.
+- **📂 Files Touched** — the physical surface area: every file created, modified, or deleted, one row
+  each. The Change Summary is logical (what we're doing); this is physical (where it lands). Both earn
+  their place because they answer different questions a reader has.
 - **🧪 Test Strategy** — how the work is proven, mapped to the spec's acceptance criteria. Name the
   level (unit / integration / e2e / manual) and the case, not a full test plan.
 

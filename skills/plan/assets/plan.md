@@ -4,7 +4,7 @@
 
 ---
 
-## 🔧 Changes
+## 🛠️ Change Summary
 
 | # | Change | Summary |
 |---|--------|---------|
@@ -12,7 +12,7 @@
 
 ---
 
-## 🛠️ Breakdown
+## 🧱 Breakdown
 
 ### 1. {{Change name}}
 
@@ -20,7 +20,7 @@
 
 ---
 
-## 📂 Files
+## 📂 Files Touched
 
 | File | Change |
 |------|--------|
