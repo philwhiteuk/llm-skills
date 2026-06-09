@@ -103,7 +103,7 @@ From the gate status, build a **dispatch set** — the failing gates whose depen
 | D5 | always | `references/d5-write-docs.md` |
 | D6 | D1–D5 all ✓ | `references/d6-merge.md` |
 
-D1, D2, and D5 are **independent** — dispatch them in the same turn so the workers run in parallel. D3, D4, D6 are sequential state transitions that the orchestrator runs **itself** (no worker) once their prerequisites are met, because each is a single `gh` command and spawning a worker for one command wastes tokens.
+D1, D2, and D5 are **independent** — dispatch them in the same turn so the workers run in parallel. D4 also dispatches a **worker** once D3 ✓: choosing reviewers from file history and clearing in-flight comments is more than one command, so it does not collapse into an inline transition. D3 and D6 are sequential state transitions that the orchestrator runs **itself** (no worker) once their prerequisites are met, because each is a single `gh` command and spawning a worker for one command wastes tokens.
 
 ---
 
@@ -124,11 +124,12 @@ is still blocking that gate. Be terse — single paragraph or short bullet list.
 
 Pass the worker the absolute path to its playbook rather than copying the playbook content into the prompt — progressive disclosure keeps the orchestrator's context lean.
 
-For D3, D4, D6 (the sequential transitions), the orchestrator does them directly:
+For D3 and D6 (the sequential transitions), the orchestrator does them directly:
 
 - **D3**: `gh pr ready <N>` — only when D1 ✓ and D2 ✓
-- **D4**: if `reviewRequests` is empty and the user has named reviewers, `gh pr edit <N> --add-reviewer <login,login>`. Otherwise wait — peers approve on their own time.
 - **D6**: `gh pr merge <N> --squash` — only when D1–D5 all ✓ and `mergeStateStatus == CLEAN`. Use the user's preferred strategy if specified (`--merge`, `--rebase`, `--squash`). **Never** use `--admin` or any flag that bypasses branch protection. **Never** use `--auto` — the merge must only happen when all gates genuinely pass right now, not speculatively.
+
+D4 is **not** an inline transition — dispatch the `references/d4-get-review.md` worker once D3 ✓. It selects reviewers from file history (falling back to CODEOWNERS, recent contributors, or user-named reviewers), addresses in-flight comments, and requests the reviewer via `gh pr edit <N> --add-reviewer`. Requesting a reviewer is the orchestrator's job to *initiate*; whether a human then approves is outside your control — that's the wait condition, not the reviewer request itself.
 
 ---
 
@@ -171,7 +172,7 @@ Per-tick discipline to keep loops cheap:
 
 - One `gh pr view` per tick (Step 1). Workers may make their own targeted calls.
 - Workers receive a path, not a playbook body. The playbook is loaded by the worker, not pre-pasted.
-- Sequential state transitions (D3, D4, D6) run inline, not as workers — one `gh` command each.
+- Sequential state transitions (D3, D6) run inline, not as workers — one `gh` command each. D4 dispatches a worker (reviewer selection is more than one command).
 
 ---
 
