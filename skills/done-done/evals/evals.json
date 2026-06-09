@@ -5,128 +5,105 @@
       "id": 1,
       "name": "already-merged-terminal",
       "prompt": "Is https://github.com/acme-corp/payments-service/pull/247 done done?",
-      "expected_output": "PR is already merged. D6 short-circuits — all six gates report as passing, Verdict: DONE with mergedAt timestamp, no workers dispatched, no further action taken.",
+      "expected_output": "PR is already merged. G7 short-circuits — the checklist reports all gates passing, Verdict: MERGED with the mergedAt timestamp, no actions taken, no sub-agents spawned.",
       "files": [],
       "assertions": [
-        "Output shows the six-gate checklist with D1 through D6 in order",
-        "All six gates show [x] passing",
-        "Verdict line reads 'Verdict: DONE' and includes a mergedAt reference",
-        "No Agent sub-agents are spawned for this PR",
-        "Only one gh pr view call is made"
+        "Output shows the G1-G7 checklist",
+        "Verdict line reads 'Verdict: MERGED' and includes the mergedAt timestamp",
+        "No sub-agents are spawned and no mutating gh commands are run",
+        "Only the primary gh pr view call is made (plus at most the GraphQL thread fetch); no merge/edit/comment calls"
       ]
     },
     {
       "id": 2,
-      "name": "parallel-fix-ci-and-docs",
+      "name": "fresh-agent-pr-comments-and-ci",
       "prompt": "Get this PR over the line: https://github.com/acme-corp/user-service/pull/89",
-      "expected_output": "D1 passes, D2 fails (lint + e2e red), D3 passes, D4 fails (no approval yet), D5 fails (body is 40 chars, no issue link), D6 fails. D2 and D5 are independent — both workers dispatched in the same turn as parallel Agent calls. D4 is dependent on D3 ✓ so the orchestrator requests reviewers inline. D6 not dispatched (D2/D5 still red).",
+      "expected_output": "Fresh agent-drafted PR. G1 ok, G2 mergeable, G3 fails (two unresolved review comments — one a clear naming fix, one a design question), G4 fails (lint red), G5 draft, G6 no approval. The skill resolves the clear comment (fix + reply + mark thread resolved), replies-and-@mentions the commenter on the design question leaving that thread open, fixes lint locally and pushes. It does NOT block waiting for remote CI — it reports CI re-running. Verdict: IN PROGRESS or BLOCKED with the open design comment surfaced.",
       "files": [],
       "assertions": [
-        "D2 worker and D5 worker are spawned in the SAME assistant turn as parallel Agent tool calls",
-        "Workers receive the absolute path to their playbook in references/, not the playbook content",
-        "D6 is NOT attempted because its prerequisites are not met",
-        "D3 sequential transition is not run (D3 already passes)",
-        "Verdict line reads 'NOT DONE — waiting on: D2, D4, D5' (or equivalent listing the failed gates)",
-        "Dispatched line lists D2 and D5"
+        "The clear/mechanical comment is fixed, replied to, AND its thread is marked resolved via the resolveReviewThread GraphQL mutation",
+        "The design-decision comment is replied to with an @-mention of the commenter and its thread is left UNRESOLVED",
+        "Lint is reproduced/fixed locally and pushed; the skill does not busy-wait on remote CI",
+        "The verdict reflects that CI is re-running and unverified, not a false 'all green'",
+        "No --admin or --auto flag appears anywhere; no merge is attempted"
       ]
     },
     {
       "id": 3,
-      "name": "draft-pr-cannot-mark-ready-while-red",
+      "name": "draft-not-flipped-while-ci-red",
       "prompt": "/done-done https://github.com/acme-corp/api-gateway/pull/31",
-      "expected_output": "PR is draft with red CI. D1 passes, D2 fails, D3 fails, D4 fails, D5 passes, D6 fails. Dependency graph means D3 cannot be flipped until D2 is green. Orchestrator dispatches D2 worker only; D3 stays pending for the next tick.",
+      "expected_output": "Draft PR with a genuinely failing, unfixed CI check (e.g. an out-of-scope/flaky failure the skill cannot fix). The skill does NOT flip the draft to ready while CI is failing-and-unfixed, escalates the out-of-scope failure in the terminal, and does not request review or merge.",
       "files": [],
       "assertions": [
-        "D2 worker is dispatched",
-        "Orchestrator does NOT run `gh pr ready` because D2 is still failing",
-        "D4 worker is NOT dispatched because D3 has not yet passed",
-        "Verdict line reflects D2, D3, D4, D6 as still-failing gates",
-        "Dispatched line shows only D2"
+        "gh pr ready is NOT run because CI is failing and unfixed",
+        "No reviewer is requested (G5 not satisfied) and no merge is attempted",
+        "The out-of-scope/unfixable CI failure is surfaced in the terminal as a human blocker, not silenced or worked around",
+        "No check or workflow is disabled/edited to bypass the failure"
       ]
     },
     {
       "id": 4,
-      "name": "all-green-orchestrator-merges",
+      "name": "all-green-approved-merges",
       "prompt": "Finish https://github.com/acme-corp/billing/pull/412",
-      "expected_output": "D1-D5 all pass, D6 is the only failing gate, mergeStateStatus is CLEAN. Orchestrator runs `gh pr merge <N> --squash --auto` inline (no worker), reports the action, next tick will see D6 pass.",
+      "expected_output": "G1-G6 all pass and mergeStateStatus is CLEAN. The skill runs the docs drift-check (best-effort, non-blocking) then merges inline with gh pr merge --squash (no --auto, no --admin). Reports the merge.",
       "files": [],
       "assertions": [
-        "Orchestrator runs gh pr merge inline, NOT as an Agent sub-agent",
-        "No worker is dispatched for D6",
-        "The merge command uses --squash --auto by default (or the user's stated preference)",
-        "Output reports the merge attempt and the verdict reflects D6 still pending until next tick"
+        "The merge runs inline (not via a sub-agent) using gh pr merge --squash",
+        "The merge command contains NO --auto and NO --admin flag",
+        "A docs drift-check is performed before merging but never blocks the merge",
+        "Merge is only attempted because all G1-G6 pass and mergeStateStatus == CLEAN"
       ]
     },
     {
       "id": 5,
-      "name": "self-approval-not-enough",
-      "prompt": "Done done check on https://github.com/acme-corp/infra/pull/77",
-      "expected_output": "reviewDecision is APPROVED but the only approving review's author.login matches the PR author. D4 must fail under the non-author-approver rule. D4 worker is dispatched to find missing reviewers; it surfaces the self-approval issue rather than silently accepting it.",
+      "name": "behind-base-rebase-with-lease",
+      "prompt": "Can you get https://github.com/acme-corp/web-app/pull/156 merged? it says it's out of date",
+      "expected_output": "PR is BEHIND base, not yet reviewed. The skill rebases onto base and force-pushes WITH --force-with-lease (never a bare --force, never a merge-commit update), notes CI will re-run, and returns rather than waiting. Rebase is done early, before requesting review.",
       "files": [],
       "assertions": [
-        "D4 marked failing despite reviewDecision being APPROVED",
-        "Reason on D4 mentions self-approval or missing peer reviewer",
-        "D4 worker is dispatched (D3 already passes)",
-        "Worker does not nag reviewers via comments"
+        "The branch is rebased onto base (git rebase), NOT updated via a merge commit / gh pr update-branch",
+        "The force-push uses --force-with-lease; a bare 'git push --force' never appears",
+        "The skill notes CI will re-run after the rebase and does not busy-wait on it",
+        "Rebase happens before review is requested (so a later rebase can't dismiss an approval)"
       ]
     },
     {
       "id": 6,
-      "name": "wip-label-respected-not-stripped",
-      "prompt": "Babysit https://github.com/acme-corp/platform/pull/501 until merged",
-      "expected_output": "PR has a `wip` label and the author's latest comment says 'still working on the e2e tests, hold off'. D1 fails. D1 worker inspects context, decides the WIP marker is intentional, does NOT strip the label, and reports asking the user to confirm before progressing.",
+      "name": "reviewer-selected-no-self-assign",
+      "prompt": "Get this done: https://github.com/acme-corp/web-app/pull/203",
+      "expected_output": "Ready, green PR by a bot/agent author, no reviewer requested, no approval. The skill selects a reviewer by priority (user-named > CODEOWNERS > file git-history > recent contributors), excludes the author, requests 1-2 reviewers, and reports who+why. If the strongest human candidate is the operator running the skill, it surfaces 'ready for your review' in the terminal rather than self-assigning them.",
       "files": [],
       "assertions": [
-        "D1 worker is dispatched",
-        "Worker does NOT run gh pr edit --remove-label",
-        "Worker reports the author signal looks intentional and asks the user",
-        "No downstream worker (D3, D4) is dispatched because D1 still fails"
+        "Reviewer selection follows the priority order and uses file git-history (or CODEOWNERS) rather than picking an arbitrary name",
+        "The PR author is excluded from candidates and at most 1-2 reviewers are requested",
+        "The skill reports WHO was selected and WHY",
+        "If the best candidate is the operator, it surfaces 'ready for your review' in the terminal instead of self-assigning"
       ]
     },
     {
       "id": 7,
-      "name": "author-self-review-comments-block-ready",
-      "prompt": "/done-done https://github.com/acme-corp/data-pipeline/pull/88",
-      "expected_output": "Draft PR where the author has reviewed their own code and left 3 inline comments (a TODO about error handling, a naming suggestion, and a style fix). CI is green (D2 passes). D1 fails because of unresolved author self-review comments. D1 worker addresses the clear fixes (naming and style), skips the design-level TODO, and reports. D3 is NOT flipped to ready because D1 still has an unresolved comment. D1 and D2 run in parallel — D2 does not block D1.",
+      "name": "waiting-on-review-returns",
+      "prompt": "/done-done https://github.com/acme-corp/core-api/pull/77",
+      "expected_output": "G1-G5 pass, a reviewer is already requested but no approval yet (G6 fails), G7 fails. There is nothing mechanical left to do — it's an indeterminate human wait. The skill takes no action, leaves no nagging comment, and returns a clear BLOCKED-needs-human verdict naming the awaited reviewer.",
       "files": [],
       "assertions": [
-        "D1 worker is dispatched and fetches author review comments via gh api",
-        "D1 worker addresses clear fixes (naming, style) with commits",
-        "D1 worker does NOT resolve the ambiguous design-level comment",
-        "D1 worker reports which comments were addressed and which were skipped",
-        "D2 does NOT block D1 — they are dispatched in the same turn as parallel workers",
-        "D3 is NOT flipped to ready because D1 still has unresolved author comments",
-        "D4 is NOT dispatched because D3 has not passed"
+        "No mutating gh command is run (no merge, no re-request, no comment)",
+        "No --auto and no --admin anywhere; no merge attempted",
+        "No nagging comment or @-mention is left on the PR to chase the reviewer",
+        "Verdict is BLOCKED — needs human, identifying that it's waiting on the requested reviewer's approval"
       ]
     },
     {
       "id": 8,
-      "name": "reviewer-selected-from-file-history",
-      "prompt": "Get this done: https://github.com/acme-corp/web-app/pull/156",
-      "expected_output": "PR is ready for review (D3 passes), CI green (D2 passes), but no reviewers requested and no approval (D4 fails). D4 worker checks git log for recent contributors to the changed files, identifies the most active contributor (excluding the PR author), and requests them as reviewer via gh pr edit --add-reviewer. Does NOT just pick the first person from a list or use a random contributor.",
+      "name": "intentional-wip-killswitch",
+      "prompt": "babysit https://github.com/acme-corp/data-pipeline/pull/19 until it merges",
+      "expected_output": "PR has a 'wip' label AND the most recent author comment says 'still working on the retry logic, don't merge yet'. The signal is live, not stale. The skill recognizes the kill-switch: it does NOT strip the label, does NOT proceed to other gates, and reports in the terminal that the author is intentionally holding the PR.",
       "files": [],
       "assertions": [
-        "D4 worker runs git log on the specific files changed in the PR to find recent contributors",
-        "D4 worker excludes the PR author from the candidate list",
-        "D4 worker selects a reviewer based on frequency/recency of contributions to the changed files",
-        "D4 worker requests 1-2 reviewers, not more",
-        "D4 worker reports WHO was selected and WHY (file history rationale)",
-        "D4 worker does NOT just pick the first name from an arbitrary list"
-      ]
-    },
-    {
-      "id": 9,
-      "name": "waiting-on-review-does-nothing",
-      "prompt": "/done-done https://github.com/acme-corp/core-api/pull/203",
-      "expected_output": "D1-D3 and D5 all pass. D4 fails — reviewers have been requested but no approval yet. D6 fails (blocked by D4). No workers dispatched. No merge attempted. No --auto merge queued. No --admin override. Verdict: NOT DONE — waiting on: D4, D6. The skill reports status and stops.",
-      "files": [],
-      "assertions": [
-        "No Agent sub-agents are spawned",
-        "No gh pr merge command is run (no --auto, no --admin, no merge at all)",
-        "D4 line shows failing with reason about awaiting reviewer approval",
-        "Verdict reads NOT DONE with D4 and D6 listed",
-        "Dispatched line reads 'none' or equivalent",
-        "No comments or @-mentions left on the PR to nag reviewers"
+        "The wip label is NOT removed and the title is not edited",
+        "The skill does not proceed to fix CI / resolve comments / request review once it judges the hold intentional",
+        "It surfaces in the terminal that the WIP signal looks intentional and asks the operator to confirm",
+        "No merge is attempted"
       ]
     }
   ]
