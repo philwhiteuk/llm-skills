@@ -30,7 +30,9 @@ Every response must include a **checklist** showing the full workflow with curre
 - [ ] **Implementation plan** ← you are here
 - [ ] Plan approved
 - [ ] Implementation
-- [ ] Draft PR opened and reviewed by user
+- [ ] Draft PR opened
+- [ ] Self-review (fresh-context) findings addressed
+- [ ] Draft PR reviewed by user
 - [ ] PR marked ready for review
 - [ ] Status updated and team notified
 ```
@@ -71,8 +73,10 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | 3d | Update status | auto | **Only run this step after the user has confirmed approval at 3c.** Immediately transition the issue to "In Progress" (or equivalent). Do this before writing any code. |
 | 4a | Implement | auto | Execute the plan step by step. Write code, run tests, verify. |
 | 4b | Draft PR | auto | Open a **draft** PR using `gh pr create --draft` — never omit `--draft`. Link back to the issue. Branch name: `<issue-id>/<kebab-case-issue-name>`. PR title: `[<issue-id>] - <brief description>`. After opening, transition the issue status to "In Review" (or equivalent). |
-| 4c | PR approval | **[human]** | Say "Draft PR opened at <link> — please review and let me know when it's ready to mark as ready for review." Wait for explicit user approval before converting to ready-for-review. **Never** mark the PR as ready for review without the user's say-so. If feedback → 4d. If approved → mark PR ready for review, then 5a. |
-| 4d | Address feedback | auto | Apply feedback, then return to 4c. |
+| 4c | Self-review | auto | **Spawn a fresh sub-agent with no additional context from this session** (use your agent/subagent tool; the `code-reviewer` agent type is the natural fit if available). Hand it *only* the PR link/number and tell it to run the **code-review-and-quality** skill — a five-axis review (correctness, readability, architecture, security, performance) sourced from https://github.com/addyosmani/agent-skills/blob/main/skills/code-review-and-quality/SKILL.md — over the PR diff, and to post each finding as an inline PR review comment tagged with that skill's severity prefix (`Critical` / required / `Nit` / `Optional` / `FYI`). The empty context is the whole point: a reviewer blind to how the code was written catches what the author cannot. The PR stays in **draft**. → 4d. |
+| 4d | Address self-review | auto | Read the sub-agent's review comments. Fix every `Critical` and required finding in follow-up commit(s); for `Nit`/`Optional`/`FYI`, apply judgment — address or reply with a brief rationale. Push the fixes, then resolve or reply to each comment so the human sees what was done. Do **not** spawn another review pass or mark the PR ready. → 4e. |
+| 4e | PR approval | **[human]** | Say "Draft PR opened at <link>, self-reviewed and findings addressed — please review and let me know when it's ready to mark as ready for review." Wait for explicit user approval before converting to ready-for-review. **Never** mark the PR as ready for review without the user's say-so. If feedback → 4f. If approved → mark PR ready for review, then 5a. |
+| 4f | Address feedback | auto | Apply feedback, then return to 4e. |
 | 5a | Update status | auto | Transition the issue to "Done" or "Merged". |
 | 5b | Notify team | auto | Send a Slack message linking the PR and issue. Delegate to the slack-message skill. |
 
@@ -106,7 +110,8 @@ Quick reference:
 - Issue has spec, no plan → 3a
 - Issue has spec + plan, status is "To Do" → 3d
 - Issue "In Progress", no PR → 4a
-- Issue "In Progress", PR open → 4c
+- Issue "In Progress", PR just opened (no self-review yet) → 4c
+- Issue "In Progress", PR self-reviewed and findings addressed → 4e
 - PR merged → 5a
 
 ## Principles
@@ -115,11 +120,13 @@ Quick reference:
 
 **Be concise.** Show the checklist, then deliver. No narration of your reasoning.
 
-**Act, don't ask.** There are three approval gates in this workflow: 2c (spec approval), 3c (plan approval), and 4c (PR approval). Every other step is autonomous — execute it immediately. Never say "here is what I would do" or "shall I go ahead?" at an auto step. Load the issue, read the spec, write the plan, open the PR — just do it. The user does not want to approve intermediate actions; they want to see deliverables at the gates. The one exception is 3b: if the spec leaves a shape-changing ambiguity, the plan skill asks the blocking question before writing. That's resolving ambiguity, not asking permission — it's allowed precisely because it keeps open questions *out* of the posted plan.
+**Act, don't ask.** There are three approval gates in this workflow: 2c (spec approval), 3c (plan approval), and 4e (PR approval). Every other step is autonomous — execute it immediately. Never say "here is what I would do" or "shall I go ahead?" at an auto step. Load the issue, read the spec, write the plan, open the PR — just do it. The user does not want to approve intermediate actions; they want to see deliverables at the gates. The one exception is 3b: if the spec leaves a shape-changing ambiguity, the plan skill asks the blocking question before writing. That's resolving ambiguity, not asking permission — it's allowed precisely because it keeps open questions *out* of the posted plan.
 
 **Status updates are gated.** Never transition an issue status before the corresponding approval gate. 2d fires after 2c approval. 3d fires after 3c approval. 4b's status update fires when the draft PR is opened.
 
-**PRs are always drafts.** Always use `gh pr create --draft`. Never mark a PR as ready for review without explicit user approval at 4c. The user must review the diff before the PR goes to the team.
+**PRs are always drafts.** Always use `gh pr create --draft`. Never mark a PR as ready for review without explicit user approval at 4e. The user must review the diff before the PR goes to the team.
+
+**Self-review before the human sees it.** Every draft PR gets a fresh-context self-review (4c) before it reaches the human gate (4e). Spawn the reviewer as a *new* sub-agent with no memory of this session — never review your own work in-context, since you already believe it's correct. The reviewer annotates the PR; you (the orchestrator, who has the context) address the findings at 4d. Critical and required findings must be fixed before 4e; lesser findings get a fix or a brief reply. The PR never leaves draft during this loop.
 
 **Fall back only when genuinely blocked.** Missing access or ambiguous tracker = ask. "I need to read the spec" = not blocked, that's the job. Do it.
 

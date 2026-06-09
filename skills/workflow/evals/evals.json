@@ -53,19 +53,20 @@
       "id": 5,
       "name": "implementation-done-needs-pr",
       "prompt": "I've finished implementing the changes for PROJ-789, can you open a PR?",
-      "expected_output": "Orchestrator identifies work is at the end of implementation phase, proceeds to draft a PR (4b), then pauses for user review (4c). Should link the PR to the JIRA issue.",
+      "expected_output": "Orchestrator identifies work is at the end of implementation phase, proceeds to draft a PR (4b), then runs a fresh-context self-review (4c) and addresses its findings (4d) before pausing for user review (4e). Should link the PR to the JIRA issue and keep it in draft throughout.",
       "files": [],
       "assertions": [
         {"text": "proceeds_to_pr: Response moves to draft a PR (step 4b)", "type": "qualitative"},
         {"text": "links_to_issue: Response mentions linking the PR back to the JIRA issue", "type": "qualitative"},
-        {"text": "pauses_for_review: Response indicates the user should review the PR before proceeding (step 4c)", "type": "qualitative"}
+        {"text": "runs_self_review: Response spawns a fresh/no-context sub-agent to self-review the PR (running the code-review-and-quality five-axis review) and address findings before handing to the human", "type": "qualitative"},
+        {"text": "pauses_for_review: After self-review, response indicates the user should review the draft PR before it is marked ready (step 4e)", "type": "qualitative"}
       ]
     },
     {
       "id": 6,
       "name": "pr-feedback-loop",
       "prompt": "The PR looks mostly good but the error handling in the webhook controller is too aggressive — it swallows errors silently. Can you fix that and also add a test for the retry logic?",
-      "expected_output": "Orchestrator identifies this as PR feedback (step 4c → not approved, go to 4d), addresses the specific feedback, then returns to 4c for re-review. Should NOT create a new PR or update the JIRA status yet.",
+      "expected_output": "Orchestrator identifies this as PR feedback (step 4e → not approved, go to 4f), addresses the specific feedback, then returns to 4e for re-review. Should NOT create a new PR or update the JIRA status yet.",
       "files": [],
       "assertions": [
         {"text": "addresses_feedback: Response focuses on the specific error handling and test feedback", "type": "qualitative"},
@@ -120,6 +121,19 @@
         {"text": "issue_link_is_clickable: Any reference to the issue uses a markdown hyperlink (e.g. [PROJ-100](https://...)) rather than the bare ID alone", "type": "qualitative"},
         {"text": "pr_link_is_clickable: When a PR is created or referenced, it is presented as a clickable markdown link, not just a PR number or branch name", "type": "qualitative"},
         {"text": "no_bare_ids: Response does NOT refer to issues or PRs using only their ID/number/key without an accompanying hyperlink", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "self-review-before-human",
+      "prompt": "The draft PR for PROJ-789 is open. Get it ready for me to look at.",
+      "expected_output": "Orchestrator recognises the draft PR exists but has not been self-reviewed yet (step 4c). It spawns a fresh sub-agent with no session context, instructs it to run the code-review-and-quality five-axis review over the PR diff and post findings as inline comments, then addresses the Critical/required findings in follow-up commits (4d), keeping the PR in draft, before handing the link to the human (4e). Should NOT mark the PR ready for review, and should NOT review the PR itself in-context.",
+      "files": [],
+      "assertions": [
+        {"text": "spawns_fresh_subagent: Response delegates the review to a new sub-agent with no additional context from this session, rather than reviewing the diff in-context itself", "type": "qualitative"},
+        {"text": "runs_review_skill: Response has the sub-agent run the code-review-and-quality skill (five-axis: correctness, readability, architecture, security, performance) over the PR and annotate findings on the PR", "type": "qualitative"},
+        {"text": "addresses_findings_in_commits: Response addresses the review findings in follow-up commit(s) before handing to the human", "type": "qualitative"},
+        {"text": "keeps_pr_draft: Response keeps the PR in draft and does NOT mark it ready for review without explicit user approval", "type": "qualitative"}
       ]
     }
   ]
