@@ -101,6 +101,6 @@ inflate to look thorough, never compress past the point of being buildable.
 
 ## After writing
 
-If you're working an issue, the plan is destined for the tracker as a comment (the workflow skill
+If you're working an issue, the plan is destined for the tracker as a comment (the dlc skill
 handles posting it). Otherwise, present it and ask: "Does this approach work, or is anything off?"
 Hold revisions to the same disciplines — terse, decided, no open questions.
