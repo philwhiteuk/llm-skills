@@ -1,5 +1,5 @@
 ---
-name: workflow
+name: dlc
 description: >
   Orchestrate the full software delivery lifecycle — from logging an issue through refinement,
   implementation, and review. Use this skill whenever the user wants to start a piece of work,
