@@ -34,7 +34,8 @@ where they remove ambiguity. It does *not* mean narrating your reasoning. If a s
 **Decide before you write; never leave questions in the output.** A plan with open questions isn't
 finished — it's a plan-shaped list of things still to figure out. When the spec leaves something
 genuinely ambiguous, resolve it *first* (see [Resolve ambiguity first](#resolve-ambiguity-first)),
-then write a plan that commits to an answer.
+then write a plan that commits to an answer. If a blocking fork is unresolved, you do not have a
+plan to write yet — output the questions, not a plan built around the gap.
 
 ## What the plan excludes
 
@@ -51,22 +52,51 @@ These belong to other documents or to nobody. Their absence is what keeps the pl
 If you catch yourself writing any of these, you've slipped from *planning* into *thinking out loud*.
 The thinking is real and useful — just keep it in chat, not in the artefact.
 
-## Resolve ambiguity first
+## Resolve ambiguity first — the gate
 
-Before writing, read the spec and the actual code, then ask: **would two reasonable engineers, given
-this spec, build materially different things?** Each fork like that is a blocking question.
+This is a gate, not a step you can skip under deadline. Before writing, read the spec and the actual
+code, then ask: **would two reasonable engineers, given this spec, build materially different
+things?** Each fork like that is a blocking question. The bar for asking is *impact*, not
+*certainty*: ask when the answer changes the shape of the plan or is expensive to reverse; stay quiet
+when it doesn't.
 
-- **If yes — ask the user, then wait.** Batch the questions, keep them concrete, and offer the
-  options you see. "Should existing sessions survive the migration, or is a forced re-login
-  acceptable?" beats "How should I handle sessions?". Resolve every blocking fork before you write a
-  line of plan.
-- **If no — just decide.** Where a sensible, conventional default is obvious and low-stakes, take it
-  silently. Don't ask permission for the unremarkable, and don't pad the plan with an "assumptions"
-  list — that's just open questions wearing a hat. The plan states what will be built; if a quiet
-  default was wrong, the user corrects it when they read the decisive plan.
+- **No blocking forks → decide and write.** Where a sensible, conventional default is obvious and
+  low-stakes, take it silently. Don't ask permission for the unremarkable, and don't pad the plan
+  with an "assumptions" list — that's just open questions wearing a hat. The plan states what will be
+  built; if a quiet default was wrong, the user corrects it when they read the decisive plan.
+- **Any blocking fork → output the questions, and nothing else.** When a fork is open, you do not
+  have a plan yet. Your deliverable is the **Blocking Questions** block below — *not* a plan, not a
+  partial plan, not a plan with the questions parked in an appendix. Stop there and hand it back.
 
-The bar for asking is *impact*, not *certainty*. Ask when the answer changes the shape of the plan or
-is expensive to reverse. Stay quiet when it doesn't.
+### Why not write the plan anyway
+
+A plan built on an unresolved fork picks an answer the reader never agreed to, then commits pages of
+file paths and steps to it. When the reader makes the real call, half the plan is wrong and has to be
+torn down — wasted work that's *more* expensive than no plan, because someone first has to find which
+parts to disregard. Hedging ("plan assumes the former") doesn't save it: a plan that hedges its own
+foundation isn't decisive, and the detail layered on top is fiction until the fork is closed.
+
+This holds **even when you can't pause for an answer** — e.g. you're run headless by an orchestrator.
+Being unable to wait is not a licence to guess and write; it's exactly when the questions-only
+deliverable matters most, because it's the artefact a human can act on. Emitting a degraded plan to
+"have produced something" is the failure mode, not the fallback.
+
+### The Blocking Questions deliverable
+
+Batch the forks, keep them concrete, and offer the options you see. Output only this — no Approach, no
+Breakdown, no preamble:
+
+```
+## ⛔ Blocking Questions
+
+Can't write a decided plan until these are settled — each changes the shape of the work.
+
+1. **{{The fork, concretely}}** — {{option A}} or {{option B}}? {{One line on what each implies.}}
+2. ...
+```
+
+"Should existing sessions survive the migration, or is a forced re-login acceptable?" beats "How
+should I handle sessions?". Once the answers come back, write the plan against them.
 
 ## Ground the plan in the codebase
 
@@ -78,11 +108,20 @@ find rather than importing your own.
 ## Writing the plan
 
 Read the template at `assets/plan.md` and fill it in — don't reconstruct it from memory; reproduce
-the section headers and emoji exactly so the format stays recognisable across every plan. The
-sections, and how to keep each one honest:
+the section headers and emoji exactly so the format stays recognisable across every plan. Use these
+five sections and no others: don't drop one, don't add your own (no "Notes", no "Assumptions", no
+"Blocking Questions" — if you needed that last one you should have stopped at the gate). The sections,
+and how to keep each one honest:
 
 - **🎯 Approach** — one sentence naming the strategy. If it needs two, the plan may be doing two
-  things; consider whether the spec should have been split.
+  things; consider whether the spec should have been split. It names *what you'll do*, not the state
+  of the world that led there — the moment it starts explaining how the system works today or why the
+  approach is sound, it's stopped being an Approach.
+
+  | Waffle (status quo + justification) | Approach (the decision) |
+  |---|---|
+  | "Today every alert in this repo is a `monitoring_alert_policy` driven by log filters, routed to Slack. PAM activations slot into that pattern, which is better than a new Datadog stack because…" | "Add PAM activation alerts as `monitoring_alert_policy` entries in `alerts.yaml`, reusing the existing Slack routing." |
+
 - **🛠️ Change Summary** — a table of the logical units of work, each with a one-line summary. This is
   the at-a-glance map; the reader should grasp the whole shape from this table alone.
 - **🧱 Breakdown** — one subsection per change from the table, in the same order. This is where
