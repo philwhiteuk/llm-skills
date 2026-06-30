@@ -179,23 +179,6 @@ Examples of good comments:
 
 ---
 
-## Extending the Heuristics
-
-To add a new gate, add a row to the Gate Table with:
-- A unique ID (G4, G5, ...)
-- A descriptive name
-- A clear pass condition
-
-To add a new weight, add a row to the Weight Table with:
-- A unique ID (W4, W5, ...)
-- A descriptive name
-- What high/low scores look like
-- A default multiplier (1x, 2x, etc.)
-
-Then add a detailed scoring section below the table explaining the nuance.
-
----
-
 ## Output Format
 
 After evaluation, present results to the user:
