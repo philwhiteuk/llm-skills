@@ -70,16 +70,13 @@ when it doesn't.
 
 ### Why not write the plan anyway
 
-A plan built on an unresolved fork picks an answer the reader never agreed to, then commits pages of
-file paths and steps to it. When the reader makes the real call, half the plan is wrong and has to be
-torn down — wasted work that's *more* expensive than no plan, because someone first has to find which
-parts to disregard. Hedging ("plan assumes the former") doesn't save it: a plan that hedges its own
-foundation isn't decisive, and the detail layered on top is fiction until the fork is closed.
+A plan built on an unresolved fork commits pages of detail to an answer the reader never agreed to;
+when they make the real call, half of it is fiction someone must first hunt down and tear out — more
+expensive than no plan. Hedging ("plan assumes the former") doesn't save it.
 
-This holds **even when you can't pause for an answer** — e.g. you're run headless by an orchestrator.
-Being unable to wait is not a licence to guess and write; it's exactly when the questions-only
-deliverable matters most, because it's the artefact a human can act on. Emitting a degraded plan to
-"have produced something" is the failure mode, not the fallback.
+This holds **even when you can't pause for an answer** (e.g. run headless): being unable to wait is
+not a licence to guess and write — the questions-only deliverable is exactly the artefact a human can
+act on, and emitting a degraded plan to "have produced something" is the failure mode, not the fallback.
 
 ### The Blocking Questions deliverable
 

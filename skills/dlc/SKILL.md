@@ -137,20 +137,18 @@ Quick reference:
 
 ## Principles
 
-**Always use clickable links.** Whenever you reference an issue, PR, or any tracker resource, include its full URL as a markdown link — never just an ID. The user should always be one click away from the artefact.
+**Always use clickable links.** Reference every issue, PR, or tracker resource as a full markdown URL — never a bare ID. The user should always be one click from the artefact.
 
-**Be concise.** Show the checklist, then deliver. No narration of your reasoning.
+**Act, don't ask.** Only 2c, 3c, and 4e are approval gates; every other step is autonomous — execute it immediately, never "shall I go ahead?". The user wants deliverables at the gates, not approval of intermediate actions. The lone exception is 3b's blocking question — that's resolving shape-changing ambiguity, not asking permission, and it keeps open questions *out* of the posted plan.
 
-**Act, don't ask.** There are three approval gates in this workflow: 2c (spec approval), 3c (plan approval), and 4e (PR approval). Every other step is autonomous — execute it immediately. Never say "here is what I would do" or "shall I go ahead?" at an auto step. Load the issue, read the spec, write the plan, open the PR — just do it. The user does not want to approve intermediate actions; they want to see deliverables at the gates. The one exception is 3b: if the spec leaves a shape-changing ambiguity, the plan skill asks the blocking question before writing. That's resolving ambiguity, not asking permission — it's allowed precisely because it keeps open questions *out* of the posted plan.
+**PRs are always drafts.** Use `gh pr create --draft`; never mark a PR ready without explicit approval at 4e. The user reviews the diff before the team does.
 
-**Status updates are gated.** Never transition an issue status before the corresponding approval gate. 2d fires after 2c approval. 3d fires after 3c approval. 4b's status update fires when the draft PR is opened.
+**Self-review with fresh eyes.** The 4c reviewer is a *new* sub-agent with no memory of this session — reviewing your own work in-context misses what you already believe is correct. It annotates the PR; you address at 4d (Critical/required fixed before 4e, lesser findings get a fix or a brief reply). The PR stays draft throughout.
 
-**PRs are always drafts.** Always use `gh pr create --draft`. Never mark a PR as ready for review without explicit user approval at 4e. The user must review the diff before the PR goes to the team.
+**Status is gated.** Never transition issue status before its approval gate: 2d after 2c, 3d after 3c, and 4b's update on draft-PR open.
 
-**Self-review before the human sees it.** Every draft PR gets a fresh-context self-review (4c) before it reaches the human gate (4e). Spawn the reviewer as a *new* sub-agent with no memory of this session — never review your own work in-context, since you already believe it's correct. The reviewer annotates the PR; you (the orchestrator, who has the context) address the findings at 4d. Critical and required findings must be fixed before 4e; lesser findings get a fix or a brief reply. The PR never leaves draft during this loop.
+**Delegate format by invoking the owning skill.** Issue descriptions → `develop:spec` (1b/2b), plans → `develop:plan` (3b), Slack → `develop:slack-message` (5b). Invoke the skill and follow its current output — never write these formats from this file's summary, which drifts; when they disagree, the invoked skill wins (see **Delegation — the skill is the source of truth** above).
 
-**Fall back only when genuinely blocked.** Missing access or ambiguous tracker = ask. "I need to read the spec" = not blocked, that's the job. Do it.
+**Fall back only when genuinely blocked.** Missing access or ambiguous tracker = ask. "I need to read the spec" = not blocked, that's the job.
 
 **Don't repeat work.** Spec exists? Skip to planning. Plan exists? Skip to implementation.
-
-**Always delegate to the format-owning skills — by invoking them.** Issue descriptions go through `develop:spec` ([`../spec/SKILL.md`](../spec/SKILL.md), steps 1b and 2b), implementation plans go through `develop:plan` ([`../plan/SKILL.md`](../plan/SKILL.md), 3b), and team notifications go through `develop:slack-message` ([`../slack-message/SKILL.md`](../slack-message/SKILL.md), 5b). "Delegate" means **call the skill with the Skill tool and follow its current output** — not reproduce what you remember it doing, and not follow this file's summary of it. These skills own their formats and evolve on their own; this workflow's descriptions of them will drift, and when they conflict the invoked skill always wins. Never write an issue description, plan, or Slack message directly. See **Delegation — the skill is the source of truth** above.

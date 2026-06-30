@@ -5,10 +5,10 @@ description: >
   Use this skill whenever the user wants a personal kanban overview, asks what they're currently
   assigned to, wants to know what's on their plate, or needs a cross-project status check.
   Trigger on phrases like: "show my issues", "what am I working on", "what's on my plate",
-  "board summary", "active tickets", "show my issues", "what's assigned to me",
-  "give me a status overview", "where are my tickets", "summarise my work", or any request
-  to see a personal view across one or more boards. Don't wait for the user to name a specific
-  tool — if they want an overview of their current work items, this skill applies.
+  "board summary", "active tickets", "what's assigned to me", "give me a status overview",
+  "where are my tickets", "summarise my work", or any request to see a personal view across
+  one or more boards. Don't wait for the user to name a specific tool — if they want an
+  overview of their current work items, this skill applies.
 ---
 
 # My Issues — Active Work Summary
@@ -46,8 +46,6 @@ Search for open issues assigned to the current user across accessible repos.
 
 ## Step 3: Render the table immediately
 
-As soon as you have the data, output the table. Don't summarise what you're about to do — just show it.
-
 ### Output format
 
 ```
@@ -75,13 +73,6 @@ As soon as you have the data, output the table. Don't summarise what you're abou
 - Pad column separators so columns are visually aligned (use consistent spacing)
 - Order rows: sort by status urgency first (In Progress / Review / Ready to Ship → Refinement → Blocked → To Do → Backlog), then by Project within each status group
 
-### Full column order
-
-| Project | Parent | Issue | Title | Status | Reporter | Labels |
-|---------|--------|-------|-------|--------|----------|--------|
-
-**Grouping:** Group by project within the table (sort order), but do NOT use separate sub-tables or headers per project — one flat table is easier to scan at a glance.
-
 ### If no active issues
 
 "You have no active issues assigned to you right now."
@@ -92,8 +83,6 @@ Add a one-line summary at the top: "You have {N} active issues across {P} projec
 
 ## Principles
 
-**Render immediately.** Don't narrate the process, don't explain what you're fetching — just fetch and display.
-
-**Stay lean.** One query. One render. No intermediate commentary.
+**Render immediately, stay lean.** One query, one render, no narration or intermediate commentary — fetch and display.
 
 **Tracker-agnostic.** The format is the same regardless of which tool is used underneath. The user doesn't need to know which MCP is being called.

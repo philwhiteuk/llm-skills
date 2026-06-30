@@ -190,20 +190,12 @@ When `merged == true`, emit only the checklist + `Verdict: MERGED at <mergedAt>`
 
 ## Step 6 — Looping is the orchestrator's job, not yours
 
-This skill does **one bounded work-pass** per invocation: clear what you can, push, report. It self-loops *only* on synchronous local work (Step 3); it does not wait on CI or humans.
-
-Re-driving across CI runs and review waits is done by wrapping it:
+This skill does **one bounded work-pass** per invocation: clear what you can, push, report (it self-loops only on synchronous local work — Step 3). Re-driving across CI runs and review waits is done by wrapping it:
 
 ```
 /loop 10m /done-done https://github.com/acme/repo/pull/123
 ```
 
-`/loop` re-invokes each tick and terminates on the literal `Verdict: MERGED` token. `/loop` is now **optional** — the skill is useful as a single pass — but it's the natural way to carry a PR across the waits the skill deliberately won't block on. If you change the verdict line, update both skills together.
+`/loop` re-invokes each tick and terminates on the literal `Verdict: MERGED` token. It's **optional** — the skill is useful as a single pass — but it's the natural way to carry a PR across the waits the skill won't block on. If you change the verdict line, update both skills together.
 
-Per-pass discipline that keeps this cheap: one primary `gh pr view` (Step 1); playbooks loaded by the worker doing that step, not pre-pasted; the one-command transitions (G5, G7) run inline rather than as sub-agents.
-
----
-
-## Why this shape
-
-The deterministic gates are the part that *works* — a repeatable read of what's blocking, so the status doesn't flicker and a `/loop` re-run behaves predictably. The judgment-driven action layer is the part that *finishes the job* — because real fixes (conflicts, CI, reviewers, comments) can't be reduced to booleans without either being too timid to help or too reckless to trust. Keeping assessment pure and pushing all the judgment into the action playbooks is what lets the skill be both predictable and genuinely useful. If you're tempted to add a gate, it must be expressible as a boolean over the payload; anything needing scoring or weighting belongs in the action layer or a different skill (`pr-triage` for human-attention scoring).
+A new gate must be expressible as a boolean over the `gh pr view` payload; anything needing scoring or weighting belongs in the action layer or in `pr-triage`.

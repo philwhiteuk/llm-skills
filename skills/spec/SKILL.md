@@ -93,9 +93,9 @@ Once you have a spec (written above or supplied by the user), classify it and re
 
 ### Classification rules
 
-**Classify by the nature of the work and who benefits — never by how much you already know about how to build it.** A fully-designed new feature is still a Story. Having the implementation worked out (e.g. from a prior fact-finding session) is **not** a reason to choose Task — the Task type exists for work whose *beneficiary* is internal (the system, a developer, an internal team), not for "Stories I happen to know how to build." Do not reach for Task just because you have implementation detail and the Task template feels like a place to put it; that detail does not belong in the spec at all (see Step 1).
+**Classify by the nature of the work and who benefits — never by how much you already know about how to build it.** The Task type exists for work whose *beneficiary* is internal (the system, a developer, an internal team), not for "Stories I happen to know how to build." A fully-designed new feature is still a Story, and the implementation detail that made it feel like a Task doesn't belong in the spec at all (see Step 1).
 
-**Default to Story for any new user-facing capability.** If the work adds something an end-user can see, do, or benefit from, it's a Story — even if it's small, and even if the build is fully specced. Only downgrade to Task when the beneficiary is genuinely internal. In a healthy feature backlog most tickets are Stories; Tasks, Spikes and Bugs are the minority. If you find yourself classifying new-feature work as Tasks, that's the signal this contamination is happening.
+**Default to Story for any new user-facing capability.** If the work adds something an end-user can see, do, or benefit from, it's a Story — even if it's small, and even if the build is fully specced. Only downgrade to Task when the beneficiary is genuinely internal. In a healthy feature backlog most tickets are Stories; Tasks, Spikes and Bugs are the minority.
 
 **Epic**
 A large, strategic initiative spanning multiple features or teams. Too big to deliver in a single sprint — it will be broken into child Stories, Tasks, or Spikes. The goal is a significant product or business outcome, not a single user workflow.
@@ -123,7 +123,7 @@ An **existing feature is broken** or behaving incorrectly. Corrective work, not 
 
 ### Handling ambiguity
 
-- **Story vs Task**: The question is *who benefits*, never *how much is known*. Does it deliver standalone value to a product end-user (not a developer or internal team)? If yes, it's a Story — no matter how thoroughly the implementation has been worked out. If no, it's a Task or Refactor. Worked-out implementation detail is **not** a Task signal.
+- **Story vs Task**: Does it deliver standalone value to a product end-user (not a developer or internal team)? If yes, it's a Story — however thoroughly the implementation has been worked out. If no, it's a Task or Refactor.
 - **Refactor vs Task**: Both are internal, but the test is whether existing code is being *restructured*. A Refactor changes the shape of code that already exists while holding behaviour constant; a Task produces something new internally (a pipeline, test coverage, tooling). "Improve / reorganise / extract / decouple existing X" → Refactor. "Add / set up / provision new Y" → Task.
 - **Refactor vs Story**: If the change is observable to an end-user, it's a Story (or a Bug), even if it touches structure on the way. A true Refactor is invisible from the outside — same behaviour, same tests pass.
 - **Story vs Spike**: Non-empty Open Questions, or ACs that depend on the implementation → lean Spike.
