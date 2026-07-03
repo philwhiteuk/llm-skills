@@ -95,11 +95,41 @@ Four phases, each with decision points and action steps. Steps marked **[human]*
 | 4a | Implement | auto | Execute the plan step by step. Write code, run tests, verify. |
 | 4b | Draft PR | auto | Open a **draft** PR using `gh pr create --draft` — never omit `--draft`. Link back to the issue. Branch name: `<issue-id>/<kebab-case-issue-name>`. PR title: `[<issue-id>] - <brief description>`. After opening, transition the issue status to "In Review" (or equivalent). |
 | 4c | Self-review | auto | **Spawn a fresh sub-agent with no additional context from this session** (use your agent/subagent tool; the `code-reviewer` agent type is the natural fit if available). Hand it *only* the PR link/number and instruct it to **invoke the `code-review-and-quality` skill via the Skill tool** and follow that skill's current instructions over the PR diff — do not have it review from a paraphrase of the skill. _(This skill lives in an external repo — [addyosmani/agent-skills](https://github.com/addyosmani/agent-skills/blob/main/skills/code-review-and-quality/SKILL.md) — not in this repo, so there is no relative link; it is resolved at runtime by the Skill tool, not from this file.)_ It posts each finding as an inline PR review comment using whatever severity scheme that skill defines. The empty context is the whole point: a reviewer blind to how the code was written catches what the author cannot. The PR stays in **draft**. → 4d. |
-| 4d | Address self-review | auto | Read the sub-agent's review comments. Fix every blocking/required finding (the highest-severity tiers in whatever scheme the review skill used) in follow-up commit(s); for lower-severity findings, apply judgment — address or reply with a brief rationale. Push the fixes, then resolve or reply to each comment so the human sees what was done. Do **not** spawn another review pass or mark the PR ready. → 4e. |
+| 4d | Address self-review | auto | Read the sub-agent's review comments. Fix every blocking/required finding (the highest-severity tiers in whatever scheme the review skill used) in follow-up commit(s); for lower-severity findings, apply judgment — address or reply with a brief rationale. Push the fixes, then reply to **and resolve** each thread you addressed — resolving is mandatory (see **Resolving review threads** below); leave a thread open only when it still needs the human. Do **not** spawn another review pass or mark the PR ready. → 4e. |
 | 4e | PR approval | **[human]** | Say "Draft PR opened at <link>, self-reviewed and findings addressed — please review and let me know when it's ready to mark as ready for review." Wait for explicit user approval before converting to ready-for-review. **Never** mark the PR as ready for review without the user's say-so. If feedback → 4f. If approved → mark PR ready for review, then 5a. |
 | 4f | Address feedback | auto | Apply feedback, then return to 4e. |
 | 5a | Update status | auto | Transition the issue to "Done" or "Merged". |
 | 5b | Notify team | auto | **Invoke the `develop:slack-message` skill** ([`../slack-message/SKILL.md`](../slack-message/SKILL.md)) **via the Skill tool** and follow its current instructions to compose and send a Slack message linking the PR and issue. Do not format the message yourself. |
+
+## Resolving review threads
+
+At 4d you must resolve every comment thread you have addressed, not just reply to it. `gh` has no built-in command for this, which is why it gets skipped — you have to go through the GraphQL API.
+
+1. List the review threads with their resolve state and node IDs:
+
+   ```bash
+   gh api graphql -f query='
+     query($owner:String!,$repo:String!,$pr:Int!){
+       repository(owner:$owner,name:$repo){
+         pullRequest(number:$pr){
+           reviewThreads(first:100){
+             nodes{ id isResolved comments(first:1){ nodes{ body path } } }
+           }
+         }
+       }
+     }' -F owner=OWNER -F repo=REPO -F pr=PR_NUMBER
+   ```
+
+2. For each thread you have dealt with, post your reply, then resolve it with its node ID:
+
+   ```bash
+   gh api graphql -f query='
+     mutation($threadId:ID!){
+       resolveReviewThread(input:{threadId:$threadId}){ thread{ id isResolved } }
+     }' -F threadId=THREAD_NODE_ID
+   ```
+
+After the loop, only threads that genuinely still need the human's input should remain unresolved. If you ran the self-review as a sub-agent you may delegate the reply-and-resolve step to it, but the orchestrator owns ensuring every addressed thread is resolved before 4e.
 
 ## Naming conventions
 
@@ -143,7 +173,7 @@ Quick reference:
 
 **PRs are always drafts.** Use `gh pr create --draft`; never mark a PR ready without explicit approval at 4e. The user reviews the diff before the team does.
 
-**Self-review with fresh eyes.** The 4c reviewer is a *new* sub-agent with no memory of this session — reviewing your own work in-context misses what you already believe is correct. It annotates the PR; you address at 4d (Critical/required fixed before 4e, lesser findings get a fix or a brief reply). The PR stays draft throughout.
+**Self-review with fresh eyes.** The 4c reviewer is a *new* sub-agent with no memory of this session — reviewing your own work in-context misses what you already believe is correct. It annotates the PR; you address at 4d (Critical/required fixed before 4e, lesser findings get a fix or a brief reply) and **resolve** each thread you handled. The PR stays draft throughout.
 
 **Status is gated.** Never transition issue status before its approval gate: 2d after 2c, 3d after 3c, and 4b's update on draft-PR open.
 
