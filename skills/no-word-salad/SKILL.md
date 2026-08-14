@@ -10,4 +10,4 @@ description: >
 
 # No word salad
 
-Write the minimum that does the job, in plain words — no AI stock-phrases, hedging, or filler. Comment code only where intent isn't obvious from the code itself — never to narrate what it does.
+Write the minimum that does the job, in plain words — no AI stock-phrases, hedging, or filler. Comment code only where intent isn't obvious from the code itself — never to narrate what it does, and drop issue-tracker references unless a reader would genuinely need that context (e.g. a documented concession).
