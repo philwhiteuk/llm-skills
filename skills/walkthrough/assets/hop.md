@@ -9,15 +9,23 @@
 
 ### 2. {{hop name}}
 
-💡 {{The lesson. A snippet of the real code — trimmed to what matters, not pasted wholesale — and
-what it does. Name the responsibility this module owns and the one thing it decides.}}
-
 📎 [`{{path}}:{{line}}`]({{path}}:{{line}})
 
-🔗 **In context:** {{Who calls this, with what. Where its result ends up. Backlink to the earlier
-hops it connects to — "the command built at hop 1 arrives here already parsed".}}
+```{{lang}}
+{{the lines that carry the decision — under ten, trimmed, not pasted wholesale}}
+```
 
-🧩 **Convention:** {{Optional. The house pattern this instance demonstrates, stated so it transfers:
-"every handler returns `Result<T, AppError>` — you'll see this again at hop 4."}}
+💡 {{Two sentences. What this module is responsible for, and the one thing it decides.}}
+
+🔗 **In context:** {{One sentence: what hands it in, where its result goes.}}
+
+🧩 **Convention:** {{Omit unless a house pattern first appears here. One sentence: "every handler
+returns `Result<T, AppError>` — you'll see this again at hop 4."}}
 
 ➡️ **Next up:** 3. {{hop name}} — {{one line on what it covers}}
+
+---
+
+**Budget: the whole turn fits one screen.** Snippet under ten lines, four short sentences of prose,
+no preamble and no recap of the last hop. Over budget means one of two things — the hop is really
+two hops, so split it and amend the itinerary; or the prose is narrating the snippet, so cut it.

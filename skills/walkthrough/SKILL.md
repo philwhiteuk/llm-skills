@@ -83,6 +83,10 @@ Follow how the system is decomposed, not how it happens to be filed. Three thin 
 sharing one responsibility are one hop. One 800-line file doing three jobs is three hops. Hop count
 should track real complexity, because the reader uses it to judge how much is left.
 
+**A hop is one screen of teaching.** Three responsibilities in one turn, or a snippet that will not
+trim, means it is two hops — split it. Splitting keeps each turn absorbable *and* keeps the count
+honest; padding one hop to cover three hides the real scale from the reader.
+
 **Start at the outside and work inward.** Begin where the outside world touches the system — HTTP
 route, CLI command, queue consumer, cron — and follow the data to where it settles. This is how
 anyone reasons about a system unprompted ("a user clicks X, then what?"), and it means every hop
@@ -94,11 +98,18 @@ One turn, before any hop: what this system is and how the repo is laid out, the 
 the full itinerary so the reader knows the scale before committing. Then stop and let them redirect.
 
 Pitch it to Phase 0. A first-contact reader needs the layout; someone after a refresher on one area
-needs two lines and the hop list.
+needs two lines and the hop list. Either way the itinerary is the substance — the preamble around
+it stays under a screen.
 
 ## Phase 4 — walk, one hop per turn
 
 Present exactly one hop, then stop. Use [`assets/hop.md`](assets/hop.md) as the shape of each turn.
+
+**Short is the point, not a courtesy.** A turn the reader skims teaches nothing, and every extra
+sentence spends attention they need for the next hop. Give them the code, the responsibility it
+owns, and the link back to what they already know. Cut background they did not ask for, prose that
+restates the snippet, alternatives the code does not take, and any recap of the last hop. What you
+leave out is still available the moment they ask — and a reader who asks is a reader still with you.
 
 Stopping is the mechanism, not a formality. It gives the reader room to ask while the context is
 still fresh, and it lets a long path arrive in pieces they can actually absorb.
